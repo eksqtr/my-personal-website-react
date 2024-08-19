@@ -37,6 +37,16 @@ jobs:
       run: |
         echo "$SSH_PRIVATE_KEY" > key.pem
         chmod 600 key.pem
-        rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" --delete public/ $VM_USERNAME@$VM_IP:/var/www/website-portfolio/public/
-        ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP "sudo systemctl restart nginx"
+        
+        ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP "mkdir -p /var/www/website-portfolio/public"
+        
+        rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" --delete out/ $VM_USERNAME@$VM_IP:/var/www/website-portfolio/
+        
+        rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" deploy/nginx.conf $VM_USERNAME@$VM_IP:/tmp/nginx.conf
+        
+        ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP << EOF
+          sudo mv /tmp/nginx.conf /etc/nginx/sites-available/default
+          sudo nginx -t  # Test the configuration
+          sudo systemctl reload nginx
+        EOF
       shell: bash
