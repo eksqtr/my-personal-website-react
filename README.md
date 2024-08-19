@@ -21,7 +21,7 @@ For this personal website project will be my portfolio to be publish on public r
 ### Ideal Roadmap (may change in the future)
 - Responsive one-page design on both platforms Desktop/Mobile View.
 - Dark-Mode supported.
-- Admin Panel to change contents.
+- Admin Panel to change page contents dynamically.
 - CI/CD Implementation via GCP.
 
 ### How to run
