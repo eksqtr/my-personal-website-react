@@ -3,7 +3,7 @@ Basically, Im <img src="https://raw.githubusercontent.com/devicons/devicon/maste
 
 For this personal website project will be my portfolio to be publish on public repository. 
 
-###**Frameworks** & **Technologies**:
+### **Frameworks** & **Technologies**:
 
 **Front-End**
 - <img src="https://camo.githubusercontent.com/789ae0acdd26c18f81088d4715b285e2c292aedf7f899aee09b71c43dfe362f2/68747470733a2f2f63646e312e69636f6e66696e6465722e636f6d2f646174612f69636f6e732f70726f6772616d696e672d646576656c6f706d656e742d382f32342f72656163745f6c6f676f2d3531322e706e67" alt="React" width="20" height="20">[React](https://react.dev/ "React"), <img src="https://cdn.worldvectorlogo.com/logos/nextjs-2.svg" alt="NextJS" width="20" height="20">[NextJS](https://nextjs.org/ "NextJS"), <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/typescript/typescript-original.svg" alt="TypeScript" width="20" height="20"> [TypeScript](typescriptlang "TypeScript"),
@@ -18,12 +18,12 @@ For this personal website project will be my portfolio to be publish on public r
 ------------
 
 
-### Initial Features
+### Ideal Roadmap (may change in the future)
 - Responsive one-page design on both platforms Desktop/Mobile View.
 - Dark-Mode supported.
 - Admin Panel to change contents.
 - CI/CD Implementation via GCP.
 
-###How to run
+### How to run
 - ``npm install`` at root directory of the project.
 - ``npm run dev`` to run the project.
