@@ -37,7 +37,6 @@ jobs:
       run: |
         echo "$SSH_PRIVATE_KEY" > key.pem
         chmod 600 key.pem
-        rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" --delete .next/ $VM_USERNAME@$VM_IP:/var/www/website-portfolio/.next/
         rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" --delete public/ $VM_USERNAME@$VM_IP:/var/www/website-portfolio/public/
         ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP "sudo systemctl restart nginx"
       shell: bash
