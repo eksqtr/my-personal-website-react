@@ -1,0 +1,43 @@
+name: Deploying to Production (Google Cloud Platform VM)
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - development
+    types:
+      - close 
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || (github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'master')
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v3
+
+    - name: Setting up NodeJS Environment
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'  
+
+    - name: Install project dependencies
+      run: npm install
+
+    - name: Build project
+      run: npm run build
+
+    - name: Deploy to Google Cloud Platform VM (Production)
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        VM_USERNAME: ${{ secrets.VM_USERNAME }}
+        VM_IP: ${{ secrets.VM_IP }}
+      run: |
+        echo "$SSH_PRIVATE_KEY" > key.pem
+        chmod 600 key.pem
+        rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" --delete .next/ $VM_USERNAME@$VM_IP:/var/www/website-portfolio/.next/
+        rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" --delete public/ $VM_USERNAME@$VM_IP:/var/www/website-portfolio/public/
+        ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP "sudo systemctl restart nginx"
+      shell: bash
