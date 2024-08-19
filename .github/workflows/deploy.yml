@@ -38,12 +38,15 @@ jobs:
         echo "$SSH_PRIVATE_KEY" > key.pem
         chmod 600 key.pem
         
-        ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP "mkdir -p /var/www/website-portfolio/public"
+        #Fixing the permission upon making public directory
+        ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP "sudo mkdir -p /var/www/website-portfolio/public"
+        ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP "sudo chown -R $VM_USERNAME:$VM_USERNAME /var/www/website-portfolio"
         
+        #Uploading the project to the server
         rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" --delete out/ $VM_USERNAME@$VM_IP:/var/www/website-portfolio/
-        
+      
+        #For deplying nginx config
         rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" deploy/nginx.conf $VM_USERNAME@$VM_IP:/tmp/nginx.conf
-        
         ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP << EOF
           sudo mv /tmp/nginx.conf /etc/nginx/sites-available/default
           sudo nginx -t  # Test the configuration
