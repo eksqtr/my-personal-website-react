@@ -40,6 +40,11 @@ jobs:
         echo "$SSH_PRIVATE_KEY" > key.pem
         chmod 600 key.pem
 
+        echo "deleting /.next/ directory"
+        # Remove the .next directory before syncing files
+        ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP "sudo rm -rf /var/www/website-portfolio/.next"
+        echo "deletion success."
+
         # Sync static files
         rsync -avz --exclude 'node_modules' -e "ssh -i key.pem -o StrictHostKeyChecking=no" . $VM_USERNAME@$VM_IP:/var/www/website-portfolio/
 
