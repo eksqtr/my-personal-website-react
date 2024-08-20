@@ -55,8 +55,8 @@ jobs:
         
         ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP << EOF
           # Ensure correct permissions and remove old files
-          sudo chown -R $VM_USERNAME:$VM_USERNAME /var/www/website-portfolio
-          sudo rm -rf /var/www/website-portfolio/*
+          sudo chown -R $VM_USERNAME:$VM_USERNAME /var/www
+          sudo rm -rf /var/www/website-portfolio
 
           # Recreate directory and set permissions
           sudo mkdir -p /var/www/website-portfolio
