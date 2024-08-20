@@ -66,15 +66,9 @@ jobs:
 
           cd /var/www/website-portfolio
 
-          # Ensure package.json is present before running npm install
-          if [ -f package.json ]; then
-            # Install dependencies
-            npm install --production
-          else
-            echo "package.json not found. Exiting."
-            exit 1
-          fi
-          
+          # install libraries
+          npm install
+
           # Build the project
           npm run build
 
@@ -84,7 +78,7 @@ jobs:
             echo "PM2 not found, installing..."
             sudo npm install -g pm2
           else
-            echo "PM2 is already installed"
+            echo "PM2 is already installed, continue;"
           fi
 
           # Delete existing PM2 process if it exists
@@ -93,11 +87,16 @@ jobs:
             echo "Deleting existing PM2 process..."
             pm2 delete website-portfolio
           else
-            echo "PM2 process not found"
+            echo "PM2 process not found, continue;"
           fi
 
           # Start the Next.js application with PM2
-          pm2 start /var/www/website-portfolio/standalone/server.js --name "website-portfolio" || true
+          if [ -f /var/www/website-portfolio/standalone/server.js ]; then
+              pm2 start /var/www/website-portfolio/standalone/server.js --name "website-portfolio"
+          else
+              echo "Error: Script not found: /var/www/website-portfolio/standalone/server.js"
+              exit 1
+          fi
 
           # Save the PM2 process list
           pm2 save
