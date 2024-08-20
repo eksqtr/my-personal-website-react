@@ -38,18 +38,30 @@ jobs:
         echo "$SSH_PRIVATE_KEY" > key.pem
         chmod 600 key.pem
         
-        #Fixing the permission upon making public directory
+        # Fixing permission issues and creating necessary directories
+        ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP "sudo mkdir -p /var/www/website-portfolio/.next"
         ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP "sudo mkdir -p /var/www/website-portfolio/public"
         ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP "sudo chown -R $VM_USERNAME:$VM_USERNAME /var/www/website-portfolio"
         
-        #Uploading the project to the server
-        rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" --delete .next/ $VM_USERNAME@$VM_IP:/var/www/website-portfolio/
-      
-        #For deplying nginx config
+        # Uploading the build directory to the server
+        rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" --delete .next/ $VM_USERNAME@$VM_IP:/var/www/website-portfolio/.next/
+        
+        # Uploading the public directory
+        rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" --delete public/ $VM_USERNAME@$VM_IP:/var/www/website-portfolio/public/
+        
+        # Uploading and applying the Nginx configuration
         rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" deploy/nginx.conf $VM_USERNAME@$VM_IP:/tmp/nginx.conf
         ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP << EOF
           sudo mv /tmp/nginx.conf /etc/nginx/sites-available/default
           sudo nginx -t  # Test the configuration
           sudo systemctl reload nginx
+          
+          # Install PM2 if not already installed
+          sudo npm install -g pm2
+
+          # Start the Next.js application with PM2
+          pm2 start npm --name "website-portfolio" -- start
+          pm2 startup
+          pm2 save
         EOF
       shell: bash
