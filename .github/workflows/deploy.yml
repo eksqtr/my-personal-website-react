@@ -31,7 +31,7 @@ jobs:
         ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP "sudo mkdir -p /var/www/website-portfolio/public"
         ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP "sudo chown -R $VM_USERNAME:$VM_USERNAME /var/www/website-portfolio"
 
-    - name: Sync files to server and Configration ng nginx.conf
+    - name: Sync files to server and Configure nginx
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         VM_USERNAME: ${{ secrets.VM_USERNAME }}
@@ -40,24 +40,22 @@ jobs:
         echo "$SSH_PRIVATE_KEY" > key.pem
         chmod 600 key.pem
 
-        # Sync static
+        # Sync static files
         rsync -avz --exclude 'node_modules' -e "ssh -i key.pem -o StrictHostKeyChecking=no" . $VM_USERNAME@$VM_IP:/var/www/website-portfolio/
 
-        # Deploy the Nginx configuration file
-        #rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" deploy/nginx.conf $VM_USERNAME@$VM_IP:/etc/nginx/sites-available/website-portfolio
+        # Deploy the Nginx configuration file to a temporary location
         rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" deploy/nginx.conf $VM_USERNAME@$VM_IP:/tmp/nginx.conf
 
-
-        # Enable the configuration and restart Nginx
+        # Update Nginx configuration and reload Nginx
         ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP << 'EOF'
+          # Move the new configuration file into place and set up symbolic link
           sudo mv /tmp/nginx.conf /etc/nginx/sites-available/website-portfolio
           sudo ln -sf /etc/nginx/sites-available/website-portfolio /etc/nginx/sites-enabled/
-          sudo nginx -t  # Test the configuration
+          
+          # Test the Nginx configuration and reload Nginx
+          sudo nginx -t
           sudo systemctl reload nginx
         EOF
-
-
-
 
     - name: Configure and Start application
       env:
