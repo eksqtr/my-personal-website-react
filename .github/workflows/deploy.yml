@@ -48,9 +48,12 @@ jobs:
 
         # Enable the configuration and restart Nginx
         ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP << 'EOF'
+          sudo mv /tmp/nginx.conf /etc/nginx/sites-available/website-portfolio
           sudo ln -sf /etc/nginx/sites-available/website-portfolio /etc/nginx/sites-enabled/
-          sudo nginx -t && sudo systemctl reload nginx
+          sudo nginx -t  # Test the configuration
+          sudo systemctl reload nginx
         EOF
+
 
 
     - name: Configure and Start application
