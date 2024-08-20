@@ -44,7 +44,9 @@ jobs:
         rsync -avz --exclude 'node_modules' -e "ssh -i key.pem -o StrictHostKeyChecking=no" . $VM_USERNAME@$VM_IP:/var/www/website-portfolio/
 
         # Deploy the Nginx configuration file
-        rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" deploy/nginx.conf $VM_USERNAME@$VM_IP:/etc/nginx/sites-available/website-portfolio
+        #rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" deploy/nginx.conf $VM_USERNAME@$VM_IP:/etc/nginx/sites-available/website-portfolio
+        rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" deploy/nginx.conf $VM_USERNAME@$VM_IP:/tmp/nginx.conf
+
 
         # Enable the configuration and restart Nginx
         ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP << 'EOF'
@@ -53,6 +55,7 @@ jobs:
           sudo nginx -t  # Test the configuration
           sudo systemctl reload nginx
         EOF
+
 
 
 
