@@ -29,7 +29,22 @@ jobs:
     - name: Build project
       run: npm run build
 
-    - name: Configuring the application and setting up permission to start the application
+    - name: Sync files to server
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        VM_USERNAME: ${{ secrets.VM_USERNAME }}
+        VM_IP: ${{ secrets.VM_IP }}
+      run: |
+        echo "$SSH_PRIVATE_KEY" > key.pem
+        chmod 600 key.pem
+        
+        # Sync only the build output and necessary files
+        rsync -avz --exclude 'node_modules' -e "ssh -i key.pem -o StrictHostKeyChecking=no" --delete .next/ public/ package.json package-lock.json $VM_USERNAME@$VM_IP:/var/www/website-portfolio/
+
+        # Sync standalone build 
+        rsync -avz --exclude 'node_modules' -e "ssh -i key.pem -o StrictHostKeyChecking=no" .next/standalone/ $VM_USERNAME@$VM_IP:/var/www/website-portfolio/
+
+    - name: Configure and start application
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         VM_USERNAME: ${{ secrets.VM_USERNAME }}
@@ -39,10 +54,8 @@ jobs:
         chmod 600 key.pem
         
         ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP << EOF
-          # Ensure correct permissions
+          # Ensure correct permissions and remove old files
           sudo chown -R $VM_USERNAME:$VM_USERNAME /var/www/website-portfolio
-
-          # Remove old files with sudo
           sudo rm -rf /var/www/website-portfolio/*
 
           # Recreate directory and set permissions
@@ -50,15 +63,15 @@ jobs:
           sudo chown -R $VM_USERNAME:$VM_USERNAME /var/www/website-portfolio
           
           cd /var/www/website-portfolio
-          
-          # Sync only the build output and necessary files
-          rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" --delete .next/ public/ package.json package-lock.json $VM_USERNAME@$VM_IP:/var/www/website-portfolio/
 
-          # Sync standalone build 
-          rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" .next/standalone/ $VM_USERNAME@$VM_IP:/var/www/website-portfolio/
-
-          # Install dependencies
-          npm install --production
+          # Ensure package.json is present before running npm install
+          if [ -f package.json ]; then
+            # Install dependencies
+            npm install --production
+          else
+            echo "package.json not found. Exiting."
+            exit 1
+          fi
 
           # Ensure PM2 is installed
           if ! command -v pm2 &> /dev/null
