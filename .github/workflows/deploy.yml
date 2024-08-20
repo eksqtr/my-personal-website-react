@@ -29,6 +29,19 @@ jobs:
     - name: Build project
       run: npm run build
 
+    - name: Configuring Directory Permissions
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        VM_USERNAME: ${{ secrets.VM_USERNAME }}
+        VM_IP: ${{ secrets.VM_IP }}
+      run: |
+        echo "$SSH_PRIVATE_KEY" > key.pem
+        chmod 600 key.pem
+
+        ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP "sudo mkdir -p /var/www/website-portfolio/.next"
+        ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP "sudo mkdir -p /var/www/website-portfolio/public"
+        ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP "sudo chown -R $VM_USERNAME:$VM_USERNAME /var/www/website-portfolio"
+
     - name: Sync files to server
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -37,8 +50,7 @@ jobs:
       run: |
         echo "$SSH_PRIVATE_KEY" > key.pem
         chmod 600 key.pem
-        
-        # Sync only the build output and necessary files
+
         rsync -avz --exclude 'node_modules' -e "ssh -i key.pem -o StrictHostKeyChecking=no" --delete .next/ public/ package.json package-lock.json $VM_USERNAME@$VM_IP:/var/www/website-portfolio/
 
         # Sync standalone build 
@@ -54,13 +66,6 @@ jobs:
         chmod 600 key.pem
         
         ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP << EOF
-          # Ensure correct permissions and remove old files
-          sudo chown -R $VM_USERNAME:$VM_USERNAME /var/www
-          sudo rm -rf /var/www/website-portfolio
-
-          # Recreate directory and set permissions
-          sudo mkdir -p /var/www/website-portfolio
-          sudo chown -R $VM_USERNAME:$VM_USERNAME /var/www/website-portfolio
           
           cd /var/www/website-portfolio
 
