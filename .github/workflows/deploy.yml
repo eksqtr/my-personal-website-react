@@ -18,17 +18,6 @@ jobs:
     - name: Checkout source code
       uses: actions/checkout@v3
 
-    - name: Setting up NodeJS Environment
-      uses: actions/setup-node@v3
-      with:
-        node-version: '20'
-
-    - name: Install dependencies
-      run: npm install
-
-    - name: Build project
-      run: npm run build
-
     - name: Configuring Directory Permissions
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -42,7 +31,7 @@ jobs:
         ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP "sudo mkdir -p /var/www/website-portfolio/public"
         ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP "sudo chown -R $VM_USERNAME:$VM_USERNAME /var/www/website-portfolio"
 
-    - name: Sync files to server
+    - name: Sync files to server and Configration ng nginx.conf
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         VM_USERNAME: ${{ secrets.VM_USERNAME }}
@@ -51,13 +40,20 @@ jobs:
         echo "$SSH_PRIVATE_KEY" > key.pem
         chmod 600 key.pem
 
-        # Sync package.json and package.lock.json
-        rsync -avz --exclude 'node_modules' -e "ssh -i key.pem -o StrictHostKeyChecking=no" --delete .next/ public/ package.json package-lock.json $VM_USERNAME@$VM_IP:/var/www/website-portfolio/
+        # Sync static
+        #rsync -avz --exclude 'node_modules' -e "ssh -i key.pem -o StrictHostKeyChecking=no" . $VM_USERNAME@$VM_IP:/var/www/website-portfolio/
 
-        # Sync standalone build 
-        rsync -avz --exclude 'node_modules' -e "ssh -i key.pem -o StrictHostKeyChecking=no" .next/standalone/ $VM_USERNAME@$VM_IP:/var/www/website-portfolio/
+        # For deplying nginx config
+        rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" deploy/nginx.conf $VM_USERNAME@$VM_IP:/tmp/nginx.conf
 
-    - name: Configure and start application
+        # Updating nginx configuration
+        ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP << EOF
+          sudo mv /tmp/nginx.conf /etc/nginx/sites-available/default
+          sudo nginx -t  # Test the configuration
+          sudo systemctl reload nginx
+        EOF
+
+    - name: Configure and Start application
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         VM_USERNAME: ${{ secrets.VM_USERNAME }}
@@ -68,11 +64,6 @@ jobs:
         
         ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP << EOF
 
-          #For deplying nginx config
-          rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" deploy/nginx.conf $VM_USERNAME@$VM_IP:/tmp/nginx.conf
-          sudo mv /tmp/nginx.conf /etc/nginx/sites-available/default
-          sudo nginx -t  # Test the configuration
-          
           cd /var/www/website-portfolio
 
           # Ensure package.json is present before running npm install
@@ -83,6 +74,9 @@ jobs:
             echo "package.json not found. Exiting."
             exit 1
           fi
+          
+          # Build the project
+          npm run build
 
           # Ensure PM2 is installed
           if ! command -v pm2 &> /dev/null
