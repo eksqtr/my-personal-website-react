@@ -41,7 +41,7 @@ jobs:
         chmod 600 key.pem
 
         # Sync static
-        #rsync -avz --exclude 'node_modules' -e "ssh -i key.pem -o StrictHostKeyChecking=no" . $VM_USERNAME@$VM_IP:/var/www/website-portfolio/
+        rsync -avz --exclude 'node_modules' -e "ssh -i key.pem -o StrictHostKeyChecking=no" . $VM_USERNAME@$VM_IP:/var/www/website-portfolio/
 
         # For deplying nginx config
         rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" deploy/nginx.conf $VM_USERNAME@$VM_IP:/tmp/nginx.conf
