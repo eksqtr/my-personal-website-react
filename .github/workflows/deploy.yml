@@ -1,4 +1,4 @@
-name: Deploy to Production (Google Cloud Platform VM)
+name: Deploying to Production (Google Cloud Platform VM)
 
 on:
   push:
@@ -11,20 +11,17 @@ on:
       - closed
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' || (github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'master')
     steps:
     - name: Checkout source code
       uses: actions/checkout@v3
 
-    - name: Setup Node.js
+    - name: Setting up NodeJS Environment
       uses: actions/setup-node@v3
       with:
         node-version: '20'
-
-    - name: Install dependencies
-      run: npm install
 
     - name: Build project
       run: npm run build
@@ -54,6 +51,16 @@ jobs:
         chmod 600 key.pem
         
         ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP << EOF
+          # Ensure correct permissions
+          sudo chown -R $VM_USERNAME:$VM_USERNAME /var/www/website-portfolio
+
+          # Remove old files with sudo
+          sudo rm -rf /var/www/website-portfolio/*
+
+          # Recreate directory and set permissions
+          sudo mkdir -p /var/www/website-portfolio
+          sudo chown -R $VM_USERNAME:$VM_USERNAME /var/www/website-portfolio
+          
           cd /var/www/website-portfolio
 
           # Install dependencies
