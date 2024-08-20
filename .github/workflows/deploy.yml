@@ -21,13 +21,7 @@ jobs:
     - name: Setting up NodeJS Environment
       uses: actions/setup-node@v3
       with:
-        node-version: '18'
-
-    - name: Install project dependencies
-      run: npm install
-
-    - name: Build project
-      run: npm run build
+        node-version: '20'
 
     - name: Deploy to Google Cloud Platform VM (Production)
       env:
@@ -37,36 +31,40 @@ jobs:
       run: |
         echo "$SSH_PRIVATE_KEY" > key.pem
         chmod 600 key.pem
-        
-        ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP << EOF
-          sudo rm -rf /var/www/website-portfolio
-          sudo mkdir -p /var/www/website-portfolio
-          sudo chown -R $VM_USERNAME:$VM_USERNAME /var/www/website-portfolio
-        EOF
 
-        rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" --delete .next/ $VM_USERNAME@$VM_IP:/var/www/website-portfolio/.next/
-        rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" --delete public/ $VM_USERNAME@$VM_IP:/var/www/website-portfolio/public/
-        rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" deploy/nginx.conf $VM_USERNAME@$VM_IP:/tmp/nginx.conf
-        
+        # Sync project files to the server
+        rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" --delete . $VM_USERNAME@$VM_IP:/var/www/website-portfolio/
+
+        # Execute commands on the server
         ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP << EOF
-          sudo mv /tmp/nginx.conf /etc/nginx/sites-available/default
-          sudo nginx -t
-          sudo systemctl reload nginx
-          
-          # Move to the project directory
           cd /var/www/website-portfolio
 
-          # Install dependencies
+          # Install modules dependencies
           npm install
 
-          # Ensure PM2 is installed
-          sudo npm install -g pm2 || true
+          # Build the project
+          npm run build
+
+          # Check if PM2 is installed and install it if not
+          if ! command -v pm2 &> /dev/null
+          then
+              echo "PM2 not found, installing..."
+              sudo npm install -g pm2
+          else
+              echo "PM2 is already installed"
+          fi
 
           # Delete existing PM2 process if it exists
-          pm2 delete website-portfolio || true
+          if pm2 list | grep -q "website-portfolio"
+          then
+              echo "Deleting existing PM2 process..."
+              pm2 delete website-portfolio
+          else
+              echo "PM2 process not found"
+          fi
 
           # Start the Next.js application with PM2
-          pm2 start npm --name "website-portfolio" -- start
+          pm2 start npm --name "website-portfolio" -- start || true
 
           # Save the PM2 process list
           pm2 save
