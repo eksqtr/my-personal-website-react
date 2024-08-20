@@ -2,6 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+/* With these css elements would implement 1 page scrolling for larger screens.*/
+
+@media (min-width: 768px) {
+  html, body {
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth; 
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+  
+  body {
+    overflow-y: scroll; 
+  }
+  
+  section {
+    scroll-snap-align: start;
+    width: 100%;
+  } 
+}
 /*
 :root {
   --foreground-rgb: 0, 0, 0;

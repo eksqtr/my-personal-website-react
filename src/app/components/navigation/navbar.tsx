@@ -58,14 +58,14 @@ const NavigationBar = (props: NavigationProps) => {
 
 
   return (
-    <nav className="py-5 flex justify-between shadow-md px-10 fixed w-full top-0 bg-white dark:bg-gray-800 z-10">
+    <nav className="py-5 flex justify-between shadow-md md:px-96 sm:px-10 fixed w-full top-0 bg-white dark:bg-gray-800 z-10">
         <h1 className="text-4xl text-gray-500 dark:text-gray-300">DEV.ejc</h1>
         <ul className="flex items-center gap-6 text-md">
 
             {activeMenu.map(menu => (
                 (
-                    <li key={menu.link.replace(/#/, '')} className={`hidden md:block ${menu.isActive ? "text-teal-600" : ""}`}>
-                        <a href={menu.link} className={menu.style}>{menu.title}</a>
+                    <li key={menu.link.replace(/#/, '')} className={`hidden md:block ${menu.style} ${menu.isActive ? "text-teal-600 dark:text-yellow-300" : ""}`}>
+                        <a href={menu.link} >{menu.title}</a>
                     </li>
                 )
             ))}
@@ -95,8 +95,8 @@ const NavigationBar = (props: NavigationProps) => {
 
             {activeMenu.map(menu => (
                 (
-                    <li className={`flex items-center left-0 ${menu.isActive ? "text-teal-600" : ""}`} key={menu.link.replace(/#/, '')}>
-                        <a href={menu.link} className={`hover:scale-110 transition-all ease-in-out duration-500 ${menu.style}`}>{menu.title}</a> 
+                    <li className={`flex items-center left-0 ${menu.style} ${menu.isActive ? "text-teal-600 dark:text-yellow-300" : ""}`} key={menu.link.replace(/#/, '')}>
+                        <a href={menu.link} className={`hover:scale-110 transition-all ease-in-out duration-500`}>{menu.title}</a> 
                         <span className={`ml-2 bg-gray-500 rounded-s-xl h-1 transition-all ease-in-out duration-500  ${menu.isActive ? 'w-10' : 'w-5'} text-black`}><hr /></span>
                     </li>
                 )
