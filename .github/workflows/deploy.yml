@@ -1,4 +1,4 @@
-name: Deploying to Production (Google Cloud Platform VM)
+name: Deploy to Production (Google Cloud Platform VM)
 
 on:
   push:
@@ -11,19 +11,25 @@ on:
       - closed
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' || (github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'master')
     steps:
     - name: Checkout source code
       uses: actions/checkout@v3
 
-    - name: Setting up NodeJS Environment
+    - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
         node-version: '20'
 
-    - name: Deploy to Google Cloud Platform VM (Production)
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build project
+      run: npm run build
+
+    - name: Sync files to server
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         VM_USERNAME: ${{ secrets.VM_USERNAME }}
@@ -31,42 +37,53 @@ jobs:
       run: |
         echo "$SSH_PRIVATE_KEY" > key.pem
         chmod 600 key.pem
+        
+        # Sync only the build output and necessary files
+        rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" --delete .next/ public/ package.json package-lock.json $VM_USERNAME@$VM_IP:/var/www/website-portfolio/
 
-        # Sync project files to the server
-        rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" --delete . $VM_USERNAME@$VM_IP:/var/www/website-portfolio/
+        # Sync standalone build 
+        rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" .next/standalone/ $VM_USERNAME@$VM_IP:/var/www/website-portfolio/
 
-        # Execute commands on the server
+    - name: Configure and start application
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        VM_USERNAME: ${{ secrets.VM_USERNAME }}
+        VM_IP: ${{ secrets.VM_IP }}
+      run: |
+        echo "$SSH_PRIVATE_KEY" > key.pem
+        chmod 600 key.pem
+        
         ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP << EOF
           cd /var/www/website-portfolio
 
-          # Install modules dependencies
-          npm install
+          # Install dependencies
+          npm install --production
 
-          # Build the project
-          npm run build
-
-          # Check if PM2 is installed and install it if not
+          # Ensure PM2 is installed
           if ! command -v pm2 &> /dev/null
           then
-              echo "PM2 not found, installing..."
-              sudo npm install -g pm2
+            echo "PM2 not found, installing..."
+            sudo npm install -g pm2
           else
-              echo "PM2 is already installed"
+            echo "PM2 is already installed"
           fi
 
           # Delete existing PM2 process if it exists
           if pm2 list | grep -q "website-portfolio"
           then
-              echo "Deleting existing PM2 process..."
-              pm2 delete website-portfolio
+            echo "Deleting existing PM2 process..."
+            pm2 delete website-portfolio
           else
-              echo "PM2 process not found"
+            echo "PM2 process not found"
           fi
 
           # Start the Next.js application with PM2
-          pm2 start npm --name "website-portfolio" -- start || true
+          pm2 start /var/www/website-portfolio/standalone/server.js --name "website-portfolio" || true
 
           # Save the PM2 process list
           pm2 save
+
+          # Reload nginx (if needed)
+          sudo systemctl reload nginx
         EOF
       shell: bash
