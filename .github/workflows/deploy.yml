@@ -51,6 +51,7 @@ jobs:
         echo "$SSH_PRIVATE_KEY" > key.pem
         chmod 600 key.pem
 
+        # Sync package.json and package.lock.json
         rsync -avz --exclude 'node_modules' -e "ssh -i key.pem -o StrictHostKeyChecking=no" --delete .next/ public/ package.json package-lock.json $VM_USERNAME@$VM_IP:/var/www/website-portfolio/
 
         # Sync standalone build 
@@ -66,6 +67,11 @@ jobs:
         chmod 600 key.pem
         
         ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP << EOF
+
+          #For deplying nginx config
+          rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" deploy/nginx.conf $VM_USERNAME@$VM_IP:/tmp/nginx.conf
+          sudo mv /tmp/nginx.conf /etc/nginx/sites-available/default
+          sudo nginx -t  # Test the configuration
           
           cd /var/www/website-portfolio
 
