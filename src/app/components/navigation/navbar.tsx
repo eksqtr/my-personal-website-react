@@ -34,7 +34,7 @@ const NavigationBar = (props: NavigationProps) => {
           }
         });
       },
-      { threshold: 0.10 }  // threshold parameter for changing active menu
+      { rootMargin: "-50px", threshold: 0.2 }  // threshold parameter for changing active menu
     );
 
     sections.forEach((section) => {
@@ -53,7 +53,7 @@ const NavigationBar = (props: NavigationProps) => {
   // Reference: https://react.dev/reference/react/useEffect
   useEffect(() => {
     // initialize the section scroll
-    initializeSectionScroll()
+    initializeSectionScroll();
   }, []);
 
 

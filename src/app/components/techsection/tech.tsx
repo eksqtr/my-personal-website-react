@@ -1,8 +1,13 @@
+import { RefObject  } from "react";
 
+type TechProps = {
+    sectionRef: RefObject<HTMLElement>
+}
 
-export const TechSection = () => {
+export const TechSection =  (props: TechProps) => {
+    
     return (
-        <section className="md:px-96 sm:px-10 flex justify-center items-center flex-col md:flex-row md:h-screen" id="tech-stack">
+        <section ref={props.sectionRef} className="md:px-96 sm:px-10 flex justify-center items-center flex-col md:flex-row md:h-screen opacity-0" id="tech-stack">
             {/* Left Side */}
             <div className="p-20 text-center md:text-left">
                 <h2 className="text-5xl py-2 text-teal-600 font-medium">Eubie Jay Clemente</h2>
