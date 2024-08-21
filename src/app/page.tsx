@@ -6,6 +6,9 @@ import NavigationBar from "@/app/components/navigation/navbar";
 import AboutSection from "@/app/components/aboutsection/about";
 import TechSection from "@/app/components/techsection/tech";
 
+// Design Utility
+import MouseHoverCircle from "@/app/components/utilities/mousecirclehover";
+
 export default function Home() {
 	const [isDarkMode, setDarkMode] = useState(false);
 
@@ -49,10 +52,16 @@ export default function Home() {
   return (
 		<div className={isDarkMode ? "dark" : ""}>
 			<main className="bg-white dark:bg-gradient-to-b dark:bg-gray-900">
-					{/* Navigation Bar Components */}
-					<NavigationBar isDarkMode={isDarkMode} setDarkMode={setDarkMode} />
-					<AboutSection sectionRef={aboutSectionRef} />
-					<TechSection sectionRef={techSectionRef} />
+
+			{/* Design Utility On Mouse Position */}
+			<MouseHoverCircle />
+			
+			{/* Navigation Bar Components */}
+			<NavigationBar isDarkMode={isDarkMode} setDarkMode={setDarkMode} />
+			{/* About Section Components */}
+			<AboutSection sectionRef={aboutSectionRef} />
+			{/* TechSection Section Components */}
+			<TechSection sectionRef={techSectionRef} />
 			</main>
 		</div>
   );
