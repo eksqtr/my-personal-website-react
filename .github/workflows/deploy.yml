@@ -57,7 +57,7 @@ jobs:
         #echo "deletion success."
 
         # Creating website-portfolio directory 
-        rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" --delete .next/ node_modules package.json package-lock.json $VM_USERNAME@$VM_IP:/var/www/website-portfolio/
+        rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" --delete .next node_modules package.json package-lock.json $VM_USERNAME@$VM_IP:/var/www/website-portfolio/
 
         # Deploy the Nginx configuration file to a temporary location
         rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" deploy/nginx.conf $VM_USERNAME@$VM_IP:/tmp/nginx.conf
