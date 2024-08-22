@@ -18,7 +18,18 @@ jobs:
     - name: Checkout source code
       uses: actions/checkout@v3
 
-    - name: Configuring Directory Permissions
+    - name: Setting up NodeJS Environment
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18.17.0'  
+
+    - name: Install project production dependencies
+      run: npm ci production 
+
+    - name: Build the project for production environment
+      run: npm run build
+
+    - name: Configuring Directory Permissions of the server
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         VM_USERNAME: ${{ secrets.VM_USERNAME }}
@@ -28,7 +39,7 @@ jobs:
         chmod 600 key.pem
 
         ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP "sudo mkdir -p /var/www/website-portfolio/.next"
-        ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP "sudo mkdir -p /var/www/website-portfolio/public"
+        # ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP "sudo mkdir -p /var/www/website-portfolio/public"
         ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP "sudo chown -R $VM_USERNAME:$VM_USERNAME /var/www/website-portfolio"
 
     - name: Sync files to server and Configure nginx
@@ -40,13 +51,13 @@ jobs:
         echo "$SSH_PRIVATE_KEY" > key.pem
         chmod 600 key.pem
 
-        echo "deleting /.next/ directory"
+        #echo "deleting /.next/ directory"
         # Remove the .next directory before syncing files
-        ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP "sudo rm -rf /var/www/website-portfolio/.next"
-        echo "deletion success."
+        #ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP "sudo rm -rf /var/www/website-portfolio"
+        #echo "deletion success."
 
-        # Sync static files
-        rsync -avz --exclude 'node_modules' -e "ssh -i key.pem -o StrictHostKeyChecking=no" . $VM_USERNAME@$VM_IP:/var/www/website-portfolio/
+        # Creating website-portfolio directory 
+        rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" --delete .next/ node_modules package.json package-lock.json $VM_USERNAME@$VM_IP:/var/www/website-portfolio/
 
         # Deploy the Nginx configuration file to a temporary location
         rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" deploy/nginx.conf $VM_USERNAME@$VM_IP:/tmp/nginx.conf
@@ -57,9 +68,9 @@ jobs:
           sudo mv /tmp/nginx.conf /etc/nginx/sites-available/website-portfolio
           sudo ln -sf /etc/nginx/sites-available/website-portfolio /etc/nginx/sites-enabled/
           
-          # Test the Nginx configuration and reload Nginx
+          # Test the Nginx configuration and reload Nginx conf
           sudo nginx -t
-          sudo systemctl reload nginx
+          sudo nginx -s reload
         EOF
 
     - name: Configure and Start application
@@ -75,11 +86,11 @@ jobs:
 
           cd /var/www/website-portfolio
 
-          # install libraries
+          # install libraries  (Disabled)
           npm install
 
-          # Build the project
-          npm run build
+          # Build the project (Disabled)
+          # npm run build
 
           # Ensure PM2 is installed
           if ! command -v pm2 &> /dev/null
@@ -113,8 +124,5 @@ jobs:
 
           # Save the PM2 process list
           pm2 save
-
-          # Reload nginx (if needed)
-          sudo systemctl reload nginx
         EOF
       shell: bash

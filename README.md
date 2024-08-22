@@ -22,11 +22,13 @@ For this personal website project will be my portfolio to be publish on public r
 ------------
 
 
-### Features
-- [x] Responsive design on different screen sizes 
-- [x] Dark-Mode supported
+### Current Features & Future Features
+- [x] Responsive design on different screen sizes using TailWindCSS.
+- [x] Dark-Mode Theme supported using TailWindCSS.
+- [x] Some aesthetic animation on the page.
+- [x] One-Scrollable Page Design.
+- [x] CI/CD Implementation via GCP Compute Engine (Ubuntu) and Set up Webserver, using nginx.
 - [] Admin Panel to change page contents dynamically maybe using Google Auth or Github Auth who knows.
-- [x] CI/CD Implementation via GCP.
 - [] Downloadable Resume.
 - [] Professional Contents.
 

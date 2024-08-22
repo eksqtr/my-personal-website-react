@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef} from 'react';
+import { useState, useEffect, useRef, RefObject} from 'react';
 
 // Import the Components Navigation Bar
 import NavigationBar from "@/app/components/navigation/navbar";
@@ -13,8 +13,8 @@ export default function Home() {
 	const [isDarkMode, setDarkMode] = useState(false);
 
 	// Here we're going to declare separate section ref on each section to behave indepedently
-	const aboutSectionRef = useRef<HTMLElement>(null);
-	const techSectionRef = useRef<HTMLElement>(null);
+	const aboutSectionRef = useRef<HTMLElement | null>(null);
+	const techSectionRef = useRef<HTMLElement | null>(null);
 
 	// Now we use useEffect to observe each sections intersct with users view
     useEffect(() => {
@@ -34,18 +34,18 @@ export default function Home() {
         );
 
     	if (aboutSectionRef.current) {
-			observer.observe(aboutSectionRef.current);
+			observer.observe(aboutSectionRef?.current);
 		}
 		if (techSectionRef.current) {
-			observer.observe(techSectionRef.current);
+			observer.observe(techSectionRef?.current);
 		}
   
 	  return () => {
 		if (aboutSectionRef.current) {
-		  observer.unobserve(aboutSectionRef.current);
+			observer.observe(aboutSectionRef?.current);
 		}
 		if (techSectionRef.current) {
-		  observer.unobserve(techSectionRef.current);
+		  observer.unobserve(techSectionRef?.current);
 		}
 	  };
     }, []);
