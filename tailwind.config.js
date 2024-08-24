@@ -24,7 +24,8 @@ module.exports = {
       animation: {
           fadeIn: 'fadeIn 1.2s ease-in-out forwards',
           fadeOut: 'fadeOut 1.2s ease-in-out forwards',
-      },},
+      },
+    },
   },
   plugins: [],
 }

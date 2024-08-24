@@ -18,13 +18,13 @@ export const MouseHoverCircle = () => {
         <div
             className="fixed rounded-full bg-teal-700 dark:bg-gray-400 opacity-10 transition-transform ease-in-out"
             style={{
-                width: '300px',
-                height: '300px',
+                width: '600px',
+                height: '600px',
                 top: position.y  + 'px',
                 left: position.x  + 'px',
                 transform: 'translate(-50%, -50%)',
                 zIndex: 0,
-                filter: 'blur(50px)', 
+                filter: 'blur(100px)', 
             }}
         ></div>
     )
