@@ -24,17 +24,20 @@ const NavigationBar = (props: NavigationProps) => {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
+            // console.log(`Section in view: ${entry.target.id}`); // Debugging
             setActiveMenu((prevMenu) =>
-              prevMenu.map((menu) =>
-                menu.link === `#${entry.target.id}`
-                  ? { ...menu, isActive: true }
-                  : { ...menu, isActive: false }
-              )
+              prevMenu.map((menu) => {
+                if (menu.link === `#${entry.target.id}`) {
+                  // console.log(`Activating menu: ${menu.link}`); // Debugging
+                  return { ...menu, isActive: true };
+                }
+                return { ...menu, isActive: false };
+              })
             );
           }
         });
       },
-      { rootMargin: "-50px", threshold: 0.2 }  // threshold parameter for changing active menu
+      { rootMargin: "-50px", threshold: 0.2 }
     );
 
     sections.forEach((section) => {
@@ -58,8 +61,11 @@ const NavigationBar = (props: NavigationProps) => {
 
 
   return (
-    <nav className="py-5 flex justify-between shadow-md md:px-96 sm:px-10 fixed w-full top-0 bg-white dark:bg-gray-800 z-10">
-        <h1 className="text-4xl text-gray-500 dark:text-gray-300">DEV.ejc</h1>
+    <nav className="py-5 flex justify-between shadow-md sm:px-10 fixed w-full top-0 bg-white dark:bg-gray-800 z-10">
+        <div className='flex flex-col p-0 m-0'>
+          <h1 className="text-4xl text-gray-500 dark:text-gray-300">DEV.ejc</h1>
+          <h1 className="text-md text-gray-500 dark:text-gray-300">clemente@eubiejay.dev</h1>
+        </div>
         <ul className="flex items-center gap-6 text-md">
 
             {activeMenu.map(menu => (
@@ -90,7 +96,7 @@ const NavigationBar = (props: NavigationProps) => {
         </ul>
 
         {/* Mobile Navigation */}
-        <ul className={`mt-20 fixed items-end right-0 w-auto flex flex-col gap-3 md:hidden dark:text-white transition-transform duration-300 ease-in-out transform ${
+        <ul className={`mt-20 fixed items-end right-0 left-0 w-auto flex flex-col gap-3 md:hidden dark:text-white transition-transform duration-300 ease-in-out transform ${
           isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
 
             {activeMenu.map(menu => (
