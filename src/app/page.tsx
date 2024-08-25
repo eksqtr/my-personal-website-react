@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef, RefObject} from 'react';
+import { useState, useEffect, useRef} from 'react';
 
 // Import the Components Navigation Bar
 import NavigationBar from "@/app/components/navigation/navbar";
@@ -33,21 +33,24 @@ export default function Home() {
             { rootMargin: "-50px", threshold: 0.2 }
         );
 
-    	if (aboutSectionRef.current) {
-			observer.observe(aboutSectionRef?.current);
-		}
-		if (techSectionRef.current) {
-			observer.observe(techSectionRef?.current);
-		}
-  
-	  return () => {
-		if (aboutSectionRef.current) {
-			observer.observe(aboutSectionRef?.current);
-		}
-		if (techSectionRef.current) {
-		  observer.unobserve(techSectionRef?.current);
-		}
-	  };
+		const aboutSection = aboutSectionRef.current;
+        const techSection = techSectionRef.current;
+
+        if (aboutSection) {
+            observer.observe(aboutSection);
+        }
+        if (techSection) {
+            observer.observe(techSection);
+        }
+
+        return () => {
+            if (aboutSection) {
+                observer.unobserve(aboutSection);
+            }
+            if (techSection) {
+                observer.unobserve(techSection);
+            }
+        };
     }, []);
   return (
 		<div className={isDarkMode ? "dark" : ""}>
@@ -64,7 +67,7 @@ export default function Home() {
 			<TechSection sectionRef={techSectionRef} />
 
 			<div className="fixed bottom-0 left-0 right-0 bg-gray-500 dark:bg-gray-800 text-white text-center py-2">
-				I'm building my personal website right now. Thanks for visiting and check back soon!
+				I&apos;m building my personal website right now. Thanks for visiting and check back soon!
 			</div>
 			</main>
 		</div>
