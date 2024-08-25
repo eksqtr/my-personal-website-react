@@ -18,29 +18,19 @@ jobs:
     - name: Checkout source code
       uses: actions/checkout@v3
 
-    - name: Set up cache for node_modules
+    - name: Cache npm and Next.js build cache
       uses: actions/cache@v4
       with:
-        path: node_modules
-        key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+        path: |
+          ~/.npm
+          ${{ github.workspace }}/.next/cache
+        key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
         restore-keys: |
-          ${{ runner.os }}-node-
-
-    - name: Set up cache for .next
-      uses: actions/cache@v4
-      with:
-        path: .next/cache
-        key: ${{ runner.os }}-next-${{ hashFiles('package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-next-
-
-    - name: Setting up NodeJS Environment
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18.17.0'  
+          ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
 
     - name: Install project production dependencies
-      run: npm ci production 
+      run: npm ci 
+      #if: steps.next-cache.outputs.cache-hit != 'true'  
 
     - name: Build the project for production environment
       run: npm run build
