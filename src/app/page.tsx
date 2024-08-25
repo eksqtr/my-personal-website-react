@@ -10,7 +10,7 @@ import TechSection from "@/app/components/techsection/tech";
 import MouseHoverCircle from "@/app/components/utilities/mousecirclehover";
 
 export default function Home() {
-	const [isDarkMode, setDarkMode] = useState(false);
+	const [isDarkMode, setDarkMode] = useState(true); // Changing the default darkmode theme to true because its beautiful.
 
 	// Here we're going to declare separate section ref on each section to behave indepedently
 	const aboutSectionRef = useRef<HTMLElement | null>(null);
