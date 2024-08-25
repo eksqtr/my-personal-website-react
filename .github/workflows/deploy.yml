@@ -30,7 +30,6 @@ jobs:
 
     - name: Install project production dependencies
       run: npm ci 
-      #if: steps.next-cache.outputs.cache-hit != 'true'  
 
     - name: Build the project for production environment
       run: npm run build
@@ -45,7 +44,6 @@ jobs:
         chmod 600 key.pem
 
         ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP "sudo mkdir -p /var/www/website-portfolio/.next"
-        # ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP "sudo mkdir -p /var/www/website-portfolio/public"
         ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP "sudo chown -R $VM_USERNAME:$VM_USERNAME /var/www/website-portfolio"
 
     - name: Sync files to server and Configure nginx
@@ -57,24 +55,13 @@ jobs:
         echo "$SSH_PRIVATE_KEY" > key.pem
         chmod 600 key.pem
 
-        #echo "deleting /.next/ directory"
-        # Remove the .next directory before syncing files
-        #ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP "sudo rm -rf /var/www/website-portfolio"
-        #echo "deletion success."
-
-        # Creating website-portfolio directory 
         rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" --delete .next node_modules package.json package-lock.json $VM_USERNAME@$VM_IP:/var/www/website-portfolio/
 
-        # Deploy the Nginx configuration file to a temporary location
         rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" deploy/nginx.conf $VM_USERNAME@$VM_IP:/tmp/nginx.conf
 
-        # Update Nginx configuration and reload Nginx
         ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP << 'EOF'
-          # Move the new configuration file into place and set up symbolic link
           sudo mv /tmp/nginx.conf /etc/nginx/sites-available/website-portfolio
           sudo ln -sf /etc/nginx/sites-available/website-portfolio /etc/nginx/sites-enabled/
-          
-          # Test the Nginx configuration and reload Nginx conf
           sudo nginx -t
           sudo nginx -s reload
         EOF
@@ -91,12 +78,6 @@ jobs:
         ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP << EOF
 
           cd /var/www/website-portfolio
-
-          # install libraries  (Disabled)
-          npm install
-
-          # Build the project (Disabled)
-          # npm run build
 
           # Ensure PM2 is installed
           if ! command -v pm2 &> /dev/null
@@ -118,15 +99,6 @@ jobs:
 
           # Start the Next.js application with PM2
           pm2 start npm --name "website-portfolio" -- start || true
-
-
-          # Start the Next.js application with PM2
-          #     pm2 start /var/www/website-portfolio/standalone/server.js --name "website-portfolio"
-          # else
-          #     echo "Error: Script not found: /var/www/website-portfolio/standalone/server.js"
-          #     exit 1
-          # fiif [ -f /var/www/website-portfolio/standalone/server.js ]; then
-          
 
           # Save the PM2 process list
           pm2 save
