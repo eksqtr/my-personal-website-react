@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import DOMPurify from 'dompurify';
 import moment from 'moment-timezone';
-import { useRouter , useSearchParams, usePathname } from "next/navigation";
+import { useSearchParams, usePathname } from "next/navigation";
 
 // props
 type JobProps = {
@@ -77,7 +77,7 @@ const JobExperience = () => {
           setSelectedJob(jobs[0]);
         }
 
-    }, [searchParams, jobs]);
+    }, [pathname, searchParams]);
 
     const handleJobClick = (job: JobProps, index: number) => {
       setSelectedJob(job);
