@@ -12,7 +12,7 @@ type NavigationProps = {
 
 const NavigationBar = (props: NavigationProps) => {
   // State to control the visibility of the menu
-  const [isMenuOpen, setMenuOpen] = useState(true);
+  const [isMenuOpen, setMenuOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState(MenuList);
 
   // Function to toggle the menu visibility
@@ -63,8 +63,8 @@ const NavigationBar = (props: NavigationProps) => {
   return (
     <nav className="py-5 flex justify-between shadow-md sm:px-10 fixed w-full top-0 bg-white dark:bg-gray-800 z-10">
         <div className='flex flex-col p-0 m-0'>
-          <h1 className="text-4xl text-gray-500 dark:text-gray-300">DEV.ejc</h1>
-          <h1 className="text-md text-gray-500 dark:text-gray-300">clemente@eubiejay.dev</h1>
+          <span className="hidden sm:block md:text-4xl text-gray-500 dark:text-gray-300">DEV.ejc</span>
+          <span className="hidden sm:block md:text-md text-gray-500 dark:text-gray-300">clemente@eubiejay.dev</span>
         </div>
         <ul className="flex items-center gap-6 text-md">
 
@@ -90,7 +90,7 @@ const NavigationBar = (props: NavigationProps) => {
             <li>
                 <a href="#" className="bg-gradient-to-r from-cyan-500 to-teal-500 text-white px-4 py-2 rounded-md">Resume</a>
             </li>
-            <li className="lg:hidden md:hidden px-3 py-3 rounded-md bg-gradient-to-r from-cyan-500 to-teal-500 text-white bg-teal-600 cursor-pointer" onClick={() => toggleMenu()}>
+            <li className="lg:hidden md:hidden px-4 py-3 mr-3 rounded-md bg-gradient-to-r from-cyan-500 to-teal-500 text-white bg-teal-600 cursor-pointer" onClick={() => toggleMenu()}>
                     { isMenuOpen ? <FaChevronLeft />: <FaChevronRight />}
             </li>
         </ul>
