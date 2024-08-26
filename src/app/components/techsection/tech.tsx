@@ -12,7 +12,7 @@ const TechSection = (props: TechProps) => {
     const [iconSize] = useState('30px'); // Increased size for better visibility
     const [resume_link, _] = useState("https://drive.google.com/file/d/1CXssqhJuY_-xgjQDOagCLyTckRvozBZr/view");
     const pathname = usePathname();
-    const sectionRef = props.sectionRef || useRef<HTMLElement>(null);
+    const sectionRef = props.sectionRef;
 
     useEffect(() => {
         const hash = window.location.hash.substring(1); // Extract hash without '#'
@@ -27,11 +27,10 @@ const TechSection = (props: TechProps) => {
             setActiveTab(tab);
         }
     
-        // Scroll to the section if the hash matches 'tech-stack'
         if (hash.startsWith('tech-stack') && sectionRef.current) {
             sectionRef.current.scrollIntoView({ behavior: 'smooth' });
         }
-    }, []);
+    }, [sectionRef]);
 
     const handleTabChange = (tab: 'tech' | 'experience') => {
         setActiveTab(tab);
