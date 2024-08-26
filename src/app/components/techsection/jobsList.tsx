@@ -83,7 +83,7 @@ const JobExperience = () => {
       setSelectedJob(job);
       const params = new URLSearchParams(searchParams);
       params.set('job', index.toString());
-      window.history.pushState(null, '', `${pathname}#$tech-stack?tab=experience&job=${index}`);
+      window.history.pushState(null, '', `${pathname}#tech-stack?tab=experience&job=${index}`);
     };
   
     // We need to sanitize the possibilies of XSS attack so we use dom prufiy for this shit
