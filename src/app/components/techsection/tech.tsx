@@ -1,5 +1,5 @@
 import { RefObject, useState} from "react";
-
+import { MdOpenInNew } from "react-icons/md";
 import JobExperience from "./jobsList"
 import techIcons from "./techIcons";
 
@@ -9,23 +9,24 @@ type TechProps = {
 const TechSection = (props: TechProps) => {
     const [activeTab, setActiveTab] = useState<'tech' | 'experience'>('tech');
     const [iconSize] = useState('30px'); // Increased size for better visibility
+    const [resume_link, _] = useState("https://drive.google.com/file/d/1CXssqhJuY_-xgjQDOagCLyTckRvozBZr/view");
   
     return (
         <section
           ref={props.sectionRef}
-          className="p-8 md:p-16 bg-gray-100 dark:bg-gray-900 lg:h-screen"
+          className="p-8 md:p-16 dark:bg-gray-900 lg:h-screen"
           id="tech-stack"
         >
           {/* Tabs */}
           <div className="mt-20 flex justify-center md:justify-start mb-8">
             <button
-              className={`px-4 py-2 text-lg font-medium ${activeTab === 'tech' ? 'text-teal-600 border-b-2 border-teal-600' : 'text-gray-600 dark:text-gray-300'}`}
+              className={`px-4 text-lg font-medium ${activeTab === 'tech' ? 'text-teal-600 border-b-2 border-teal-600' : 'text-gray-600 dark:text-gray-300'}`}
               onClick={() => setActiveTab('tech')}
             >
               Tech Stacks
             </button>
             <button
-              className={`px-4 py-2 text-lg font-medium ml-4 ${activeTab === 'experience' ? 'text-teal-600 border-b-2 border-teal-600' : 'text-gray-600 dark:text-gray-300'}`}
+              className={`px-4 text-lg font-medium ml-4 ${activeTab === 'experience' ? 'text-teal-600 border-b-2 border-teal-600' : 'text-gray-600 dark:text-gray-300'}`}
               onClick={() => setActiveTab('experience')}
             >
               Experience
@@ -82,10 +83,15 @@ const TechSection = (props: TechProps) => {
               </div>
             </div>
           ) : (
-            <div className="flex-1">
-              <h2 className="text-4xl md:text-5xl py-4 text-teal-600 font-medium text-center md:text-left">Experience</h2>
-              <JobExperience />
+            <div className="flex-1  ">
+                <h2 className="flex item-center sm:flex-row text-4xl md:text-5xl py-2 text-teal-600 font-medium text-center md:text-left">Experience
+                    <a href={resume_link} target="_blank" className={`flex item-center gap-2 mt-auto text-sm text-gray-300 font-medium ml-4 hover:scale-105 transition-transform ease-in-out hover:text-teal-500`}>
+                    View Full Resume <MdOpenInNew className="text-1xl"/>
+                    </a>
+                </h2>
+                <JobExperience />
             </div>
+            
           )}
         </section>
       );

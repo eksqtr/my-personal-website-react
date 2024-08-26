@@ -23,8 +23,9 @@ export const MouseHoverCircle = () => {
                 top: position.y  + 'px',
                 left: position.x  + 'px',
                 transform: 'translate(-50%, -50%)',
-                zIndex: 0,
+                zIndex: 1,
                 filter: 'blur(100px)', 
+                pointerEvents: 'none'
             }}
         ></div>
     )
