@@ -1,5 +1,6 @@
-import { RefObject, useState} from "react";
+import { RefObject, useState, useEffect, useRef} from "react";
 import { MdOpenInNew } from "react-icons/md";
+import { usePathname } from "next/navigation";
 import JobExperience from "./jobsList"
 import techIcons from "./techIcons";
 
@@ -10,6 +11,36 @@ const TechSection = (props: TechProps) => {
     const [activeTab, setActiveTab] = useState<'tech' | 'experience'>('tech');
     const [iconSize] = useState('30px'); // Increased size for better visibility
     const [resume_link, _] = useState("https://drive.google.com/file/d/1CXssqhJuY_-xgjQDOagCLyTckRvozBZr/view");
+    const pathname = usePathname();
+    const sectionRef = props.sectionRef || useRef<HTMLElement>(null);
+
+    useEffect(() => {
+        const hash = window.location.hash.substring(1); // Extract hash without '#'
+        const urlParams = new URLSearchParams(hash.split('?')[1] || '');
+    
+        // Get query parameter value
+        const tab = urlParams.get('tab') as 'tech' | 'experience';
+    
+        console.log("tab: ", tab);
+    
+        if (tab) {
+            setActiveTab(tab);
+        }
+    
+        // Scroll to the section if the hash matches 'tech-stack'
+        if (hash.startsWith('tech-stack') && sectionRef.current) {
+            sectionRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, []);
+
+    const handleTabChange = (tab: 'tech' | 'experience') => {
+        setActiveTab(tab);
+        const hash = 'tech-stack';
+        const params = new URLSearchParams();
+        params.set('tab', tab);
+        window.history.pushState(null, '', tab == 'tech' ? `${pathname}#${hash}?${params.toString()}` : `${pathname}#${hash}?${params.toString()}&job=0`);
+    };
+
   
     return (
         <section
@@ -21,13 +52,13 @@ const TechSection = (props: TechProps) => {
           <div className="mt-20 flex justify-center md:justify-start mb-8">
             <button
               className={`px-4 text-lg font-medium ${activeTab === 'tech' ? 'text-teal-600 border-b-2 border-teal-600' : 'text-gray-600 dark:text-gray-300'}`}
-              onClick={() => setActiveTab('tech')}
+              onClick={() => handleTabChange('tech')}
             >
               Tech Stacks
             </button>
             <button
               className={`px-4 text-lg font-medium ml-4 ${activeTab === 'experience' ? 'text-teal-600 border-b-2 border-teal-600' : 'text-gray-600 dark:text-gray-300'}`}
-              onClick={() => setActiveTab('experience')}
+              onClick={() => handleTabChange('experience')}
             >
               Experience
             </button>
@@ -84,9 +115,9 @@ const TechSection = (props: TechProps) => {
             </div>
           ) : (
             <div className="flex-1  ">
-                <h2 className="flex item-center sm:flex-row text-4xl md:text-5xl py-2 text-teal-600 font-medium text-center md:text-left">Experience
-                    <a href={resume_link} target="_blank" className={`flex item-center gap-2 mt-auto text-sm text-gray-300 font-medium ml-4 hover:scale-105 transition-transform ease-in-out hover:text-teal-500`}>
-                    View Full Resume <MdOpenInNew className="text-1xl"/>
+                <h2 className="flex item-center sm:flex-row text-4xl md:text-5xl py-2 text-teal-600 font-medium text-center md:text-left gap-3">Experience
+                    <a href={resume_link} target="_blank" className={`flex item-center gap-2 mt-auto text-sm text-gray-600 dark:text-gray-300 font-medium ml-4 hover:!text-teal-400 hover:scale-105 transition-transform ease-in-out`}>
+                    View Resume <MdOpenInNew className="text-1xl mt-auto mb-auto"/>
                     </a>
                 </h2>
                 <JobExperience />

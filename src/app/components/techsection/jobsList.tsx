@@ -1,6 +1,7 @@
-import { useState} from "react";
+import { useState, useEffect } from "react";
 import DOMPurify from 'dompurify';
 import moment from 'moment-timezone';
+import { useRouter , useSearchParams, usePathname } from "next/navigation";
 
 // props
 type JobProps = {
@@ -58,7 +59,32 @@ const jobs: JobProps[] = [
     },
 ];
 const JobExperience = () => {
-    const [selectedJob, setSelectedJob] = useState<JobProps | null>(jobs[0]);
+    const [selectedJob, setSelectedJob] = useState<JobProps | null>(null); //jobs[0]
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
+
+    useEffect(() => {
+        const hash = window.location.hash.substring(1); // extract without the #
+        const urlParams = new URLSearchParams(hash.split('?')[1] || '');
+        const jobId = urlParams.get('job');
+        console.log("jobid", jobId);
+        console.log(jobs.length);
+
+        if (jobId && jobs[parseInt(jobId)]) setSelectedJob(jobs[parseInt(jobId)]);
+        else {
+          // wW need to handle if jobid is undefined as well out of array index.
+          window.history.pushState(null, '', `${pathname}#tech-stack?tab=experience&job=0`);
+          setSelectedJob(jobs[0]);
+        }
+
+    }, [searchParams, jobs]);
+
+    const handleJobClick = (job: JobProps, index: number) => {
+      setSelectedJob(job);
+      const params = new URLSearchParams(searchParams);
+      params.set('job', index.toString());
+      window.history.pushState(null, '', `${pathname}#$tech-stack?tab=experience&job=${index}`);
+    };
   
     // We need to sanitize the possibilies of XSS attack so we use dom prufiy for this shit
     const arrTags: Array<string> = ['b', 'i', 'span', 'strong', 'a', 'div', 'ul', 'li', 'em', 'br'];
@@ -91,7 +117,7 @@ const JobExperience = () => {
                     className={`cursor-pointer p-4 rounded-lg transition-all duration-300 ease-in-out md:w-full sm:w-[200px] ${
                     selectedJob === job ? "bg-teal-600 text-white" : "bg-gray-100 dark:bg-gray-700"
                     } hover:bg-teal-500 hover:text-white`}
-                    onClick={() => setSelectedJob(job)}
+                    onClick={() => handleJobClick(job, index)}
                 >
                     <div className="flex justify-start flex-col">
                     <span className="text-lg md:text-xl font-semibold dark:text-gray-100">
