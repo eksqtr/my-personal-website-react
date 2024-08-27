@@ -14,9 +14,26 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' || (github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'master')
+    env:
+      APP_URL: ${{ vars.APP_URL }}
+      APP_TITLE: ${{ vars.APP_TITLE }}
+      APP_AUTHOR: ${{ vars.APP_AUTHOR }}
+      APP_DESCRIPTION: ${{ vars.APP_DESCRIPTION }}
+      APP_METADATA_KEYWORDS: ${{ vars.APP_METADATA_KEYWORDS }}
+      APP_METADATA_OPENGRAPH_SITENAME: ${{ vars.APP_METADATA_OPENGRAPH_SITENAME }}
+
     steps:
     - name: Checkout source code
       uses: actions/checkout@v3
+
+    - name: Print environment variables (Debugging)
+      run: |
+        echo "APP_URL: ${{ env.APP_URL }}"
+        echo "APP_TITLE: ${{ env.APP_TITLE }}"
+        echo "APP_AUTHOR: ${{ env.APP_AUTHOR }}"
+        echo "APP_DESCRIPTION: ${{ env.APP_DESCRIPTION }}"
+        echo "APP_METADATA_KEYWORDS: ${{ env.APP_METADATA_KEYWORDS }}"
+        echo "APP_METADATA_OPENGRAPH_SITENAME: ${{ env.APP_METADATA_OPENGRAPH_SITENAME }}"
 
     - name: Cache npm and Next.js build cache
       uses: actions/cache@v4
@@ -32,13 +49,6 @@ jobs:
       run: npm ci
 
     - name: Build the project for production environment
-      env:
-          APP_URL: ${{ vars.APP_URL }}
-          APP_TITLE: ${{ vars.APP_TITLE }}
-          APP_AUTHOR: ${{ vars.APP_AUTHOR }}
-          APP_DESCRIPTION: ${{ vars.APP_DESCRIPTION }}
-          APP_METADATA_KEYWORDS: ${{ vars.APP_METADATA_KEYWORDS }}
-          APP_METADATA_OPENGRAPH_SITENAME: ${{ vars.APP_METADATA_OPENGRAPH_SITENAME }}
       run: npm run build
 
     - name: Configuring Directory Permissions of the server
@@ -74,16 +84,6 @@ jobs:
         EOF
 
     - name: Configure environment variables on the server
-      env:
-        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        VM_USERNAME: ${{ secrets.VM_USERNAME }}
-        VM_IP: ${{ secrets.VM_IP }}
-        APP_URL: ${{ vars.APP_URL }}
-        APP_TITLE: ${{ vars.APP_TITLE }}
-        APP_AUTHOR: ${{ vars.APP_AUTHOR }}
-        APP_DESCRIPTION: ${{ vars.APP_DESCRIPTION }}
-        APP_METADATA_KEYWORDS: ${{ vars.APP_METADATA_KEYWORDS }}
-        APP_METADATA_OPENGRAPH_SITENAME: ${{ vars.APP_METADATA_OPENGRAPH_SITENAME }}
       run: |
         echo "$SSH_PRIVATE_KEY" > key.pem
         chmod 600 key.pem
@@ -96,15 +96,6 @@ jobs:
           echo "APP_METADATA_KEYWORDS=$APP_METADATA_KEYWORDS" >> /var/www/website-portfolio/.env
           echo "APP_METADATA_OPENGRAPH_SITENAME=$APP_METADATA_OPENGRAPH_SITENAME" >> /var/www/website-portfolio/.env
         EOF
-
-    - name: Print environment variables (Debugging)
-      run: |
-        echo "APP_URL: ${{ vars.APP_URL }}"
-        echo "APP_TITLE: ${{ vars.APP_TITLE }}"
-        echo "APP_AUTHOR: ${{ vars.APP_AUTHOR }}"
-        echo "APP_DESCRIPTION: ${{ vars.APP_DESCRIPTION }}"
-        echo "APP_METADATA_KEYWORDS: ${{ vars.APP_METADATA_KEYWORDS }}"
-        echo "APP_METADATA_OPENGRAPH_SITENAME: ${{ vars.APP_METADATA_OPENGRAPH_SITENAME }}"
 
     - name: Configure and Start application
       env:
