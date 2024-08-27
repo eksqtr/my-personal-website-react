@@ -90,7 +90,7 @@ jobs:
           sudo nginx -t
           sudo nginx -s reload
         EOF
-
+        
     # - name: Configure environment variables on the server
     #   run: |
     #     echo "$SSH_PRIVATE_KEY" > key.pem
