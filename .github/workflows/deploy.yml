@@ -80,7 +80,7 @@ jobs:
         echo "$SSH_PRIVATE_KEY" > key.pem
         chmod 600 key.pem
 
-        rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" --delete .env .next node_modules package.json package-lock.json $VM_USERNAME@$VM_IP:/var/www/website-portfolio/
+        rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" --delete .env .next node_modules public package.json package-lock.json $VM_USERNAME@$VM_IP:/var/www/website-portfolio/
 
         rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" deploy/nginx.conf $VM_USERNAME@$VM_IP:/tmp/nginx.conf
 
