@@ -50,14 +50,14 @@ jobs:
       run: npm ci
 
     - name: Build the project for production environment
-      env:
-        APP_URL: ${{ env.APP_URL }}
-        APP_TITLE: ${{ env.APP_TITLE }}
-        APP_AUTHOR: ${{ env.APP_AUTHOR }}
-        APP_DESCRIPTION: ${{ env.APP_DESCRIPTION }}
-        APP_METADATA_KEYWORDS: ${{ env.APP_METADATA_KEYWORDS }}
-        APP_METADATA_OPENGRAPH_SITENAME: ${{ env.APP_METADATA_OPENGRAPH_SITENAME }}
-      run: npm run build
+      run: | 
+        echo "APP_URL=$APP_URL" > .env
+        echo "APP_TITLE=$APP_TITLE" >> .env
+        echo "APP_AUTHOR=$APP_AUTHOR" >> .env
+        echo "APP_DESCRIPTION=$APP_DESCRIPTION" >> .env
+        echo "APP_METADATA_KEYWORDS=$APP_METADATA_KEYWORDS" >> .env
+        echo "APP_METADATA_OPENGRAPH_SITENAME=$APP_METADATA_OPENGRAPH_SITENAME" >> .env
+        npm run build
 
     - name: Configuring Directory Permissions of the server
       env:
@@ -80,7 +80,7 @@ jobs:
         echo "$SSH_PRIVATE_KEY" > key.pem
         chmod 600 key.pem
 
-        rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" --delete .next node_modules package.json package-lock.json $VM_USERNAME@$VM_IP:/var/www/website-portfolio/
+        rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" --delete .env .next node_modules package.json package-lock.json $VM_USERNAME@$VM_IP:/var/www/website-portfolio/
 
         rsync -avz -e "ssh -i key.pem -o StrictHostKeyChecking=no" deploy/nginx.conf $VM_USERNAME@$VM_IP:/tmp/nginx.conf
 
@@ -90,20 +90,20 @@ jobs:
           sudo nginx -t
           sudo nginx -s reload
         EOF
+        
+    # - name: Configure environment variables on the server
+    #   run: |
+    #     echo "$SSH_PRIVATE_KEY" > key.pem
+    #     chmod 600 key.pem
 
-    - name: Configure environment variables on the server
-      run: |
-        echo "$SSH_PRIVATE_KEY" > key.pem
-        chmod 600 key.pem
-
-        ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP << EOF
-          echo "APP_URL=$APP_URL" > /var/www/website-portfolio/.env
-          echo "APP_TITLE=$APP_TITLE" >> /var/www/website-portfolio/.env
-          echo "APP_AUTHOR=$APP_AUTHOR" >> /var/www/website-portfolio/.env
-          echo "APP_DESCRIPTION=$APP_DESCRIPTION" >> /var/www/website-portfolio/.env
-          echo "APP_METADATA_KEYWORDS=$APP_METADATA_KEYWORDS" >> /var/www/website-portfolio/.env
-          echo "APP_METADATA_OPENGRAPH_SITENAME=$APP_METADATA_OPENGRAPH_SITENAME" >> /var/www/website-portfolio/.env
-        EOF
+    #     ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP << EOF
+    #       echo "APP_URL=$APP_URL" > /var/www/website-portfolio/.env
+    #       echo "APP_TITLE=$APP_TITLE" >> /var/www/website-portfolio/.env
+    #       echo "APP_AUTHOR=$APP_AUTHOR" >> /var/www/website-portfolio/.env
+    #       echo "APP_DESCRIPTION=$APP_DESCRIPTION" >> /var/www/website-portfolio/.env
+    #       echo "APP_METADATA_KEYWORDS=$APP_METADATA_KEYWORDS" >> /var/www/website-portfolio/.env
+    #       echo "APP_METADATA_OPENGRAPH_SITENAME=$APP_METADATA_OPENGRAPH_SITENAME" >> /var/www/website-portfolio/.env
+    #     EOF
 
     - name: Configure and Start application
       env:
