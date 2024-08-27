@@ -29,9 +29,17 @@ jobs:
           ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
 
     - name: Install project production dependencies
-      run: npm ci 
+      run: npm ci
 
     - name: Build the project for production environment
+      env:
+        APP_URL: ${{ vars.APP_URL }}
+        APP_TITLE: ${{ vars.APP_TITLE }}
+        APP_AUTHOR: ${{ vars.APP_AUTHOR }}
+        APP_DESCRIPTION: ${{ vars.APP_DESCRIPTION }}
+        APP_IMAGE_URL: ${{ vars.APP_IMAGE_URL }}
+        APP_METADATA_KEYWORDS: ${{ vars.APP_METADATA_KEYWORDS }}
+        APP_METADATA_OPENGRAPH_SITENAME: ${{ vars.APP_METADATA_OPENGRAPH_SITENAME }}
       run: npm run build
 
     - name: Configuring Directory Permissions of the server
@@ -64,6 +72,32 @@ jobs:
           sudo ln -sf /etc/nginx/sites-available/website-portfolio /etc/nginx/sites-enabled/
           sudo nginx -t
           sudo nginx -s reload
+        EOF
+
+    - name: Configure environment variables on the server
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        VM_USERNAME: ${{ secrets.VM_USERNAME }}
+        VM_IP: ${{ secrets.VM_IP }}
+        APP_URL: ${{ vars.APP_URL }}
+        APP_TITLE: ${{ vars.APP_TITLE }}
+        APP_AUTHOR: ${{ vars.APP_AUTHOR }}
+        APP_DESCRIPTION: ${{ vars.APP_DESCRIPTION }}
+        APP_IMAGE_URL: ${{ vars.APP_IMAGE_URL }}
+        APP_METADATA_KEYWORDS: ${{ vars.APP_METADATA_KEYWORDS }}
+        APP_METADATA_OPENGRAPH_SITENAME: ${{ vars.APP_METADATA_OPENGRAPH_SITENAME }}
+      run: |
+        echo "$SSH_PRIVATE_KEY" > key.pem
+        chmod 600 key.pem
+
+        ssh -i key.pem -o StrictHostKeyChecking=no $VM_USERNAME@$VM_IP << EOF
+          echo "APP_URL=$APP_URL" > /var/www/website-portfolio/.env
+          echo "APP_TITLE=$APP_TITLE" >> /var/www/website-portfolio/.env
+          echo "APP_AUTHOR=$APP_AUTHOR" >> /var/www/website-portfolio/.env
+          echo "APP_DESCRIPTION=$APP_DESCRIPTION" >> /var/www/website-portfolio/.env
+          echo "APP_IMAGE_URL=$APP_IMAGE_URL" >> /var/www/website-portfolio/.env
+          echo "APP_METADATA_KEYWORDS=$APP_METADATA_KEYWORDS" >> /var/www/website-portfolio/.env
+          echo "APP_METADATA_OPENGRAPH_SITENAME=$APP_METADATA_OPENGRAPH_SITENAME" >> /var/www/website-portfolio/.env
         EOF
 
     - name: Configure and Start application
