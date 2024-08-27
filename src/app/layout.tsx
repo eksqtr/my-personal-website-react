@@ -1,16 +1,15 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.APP_URL || "http://localhost:3000"),
   title: process.env.APP_TITLE || "Personal Website",
   description: process.env.APP_DESCRIPTION || "My Personal Website",
   keywords: process.env.APP_METADATA_KEYWORDS,
   authors: [{ name: process.env.APP_AUTHOR, url: process.env.APP_URL }],
-  viewport: "width=device-width, initial-scale=1.0",
-  themeColor: "#ffffff",
   openGraph: {
     title: process.env.APP_TITLE || "Personal Website",
     description: process.env.APP_DESCRIPTION || "My Personal Website",
@@ -36,6 +35,10 @@ export const metadata: Metadata = {
     apple: "/favicon.ico",
   },
 };
+
+export const viewport: Viewport = {
+  themeColor: '#ffffff',
+}
 
 export default function RootLayout({
   children,
