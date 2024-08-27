@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/images/about.png",
+        url: `${process.env.APP_URL}/images/about.png`,
         width: 1200,
         height: 630,
         alt: process.env.APP_TITLE,
@@ -30,9 +30,9 @@ export const metadata: Metadata = {
     canonical: process.env.APP_URL,
   },
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon.ico",
-    apple: "/favicon.ico",
+    icon: `${process.env.APP_URL}/favicon.ico`,
+    shortcut: `${process.env.APP_URL}/favicon.ico`,
+    apple: `${process.env.APP_URL}/favicon.ico`,
   },
 };
 
@@ -48,7 +48,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/public/favicon.ico" />
         {/* Include the Devicons CSS */}
         <link
           rel="stylesheet"
