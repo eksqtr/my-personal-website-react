@@ -46,6 +46,8 @@ logs
 
 node_modules
 bower_components
+.env
+.env.development
 
 *.sublime*
 
