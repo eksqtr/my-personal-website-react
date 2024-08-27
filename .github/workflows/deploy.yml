@@ -91,13 +91,13 @@ jobs:
         EOF
 
     - name: Print environment variables (Debugging)
-    run: |
-      echo "APP_URL: ${{ env.APP_URL }}"
-      echo "APP_TITLE: ${{ env.APP_TITLE }}"
-      echo "APP_AUTHOR: ${{ env.APP_AUTHOR }}"
-      echo "APP_DESCRIPTION: ${{ env.APP_DESCRIPTION }}"
-      echo "APP_METADATA_KEYWORDS: ${{ env.APP_METADATA_KEYWORDS }}"
-      echo "APP_METADATA_OPENGRAPH_SITENAME: ${{ env.APP_METADATA_OPENGRAPH_SITENAME }}"
+      run: |
+        echo "APP_URL: ${{ env.APP_URL }}"
+        echo "APP_TITLE: ${{ env.APP_TITLE }}"
+        echo "APP_AUTHOR: ${{ env.APP_AUTHOR }}"
+        echo "APP_DESCRIPTION: ${{ env.APP_DESCRIPTION }}"
+        echo "APP_METADATA_KEYWORDS: ${{ env.APP_METADATA_KEYWORDS }}"
+        echo "APP_METADATA_OPENGRAPH_SITENAME: ${{ env.APP_METADATA_OPENGRAPH_SITENAME }}"
 
     - name: Configure and Start application
       env:
