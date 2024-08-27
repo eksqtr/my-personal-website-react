@@ -29,12 +29,12 @@ jobs:
 
     - name: Print environment variables (Debugging)
       run: |
-        echo "APP_URL: ${{ env.APP_URL }}"
-        echo "APP_TITLE: ${{ env.APP_TITLE }}"
-        echo "APP_AUTHOR: ${{ env.APP_AUTHOR }}"
-        echo "APP_DESCRIPTION: ${{ env.APP_DESCRIPTION }}"
-        echo "APP_METADATA_KEYWORDS: ${{ env.APP_METADATA_KEYWORDS }}"
-        echo "APP_METADATA_OPENGRAPH_SITENAME: ${{ env.APP_METADATA_OPENGRAPH_SITENAME }}"
+        echo "APP_URL: $APP_URL"
+        echo "APP_TITLE: $APP_TITLE"
+        echo "APP_AUTHOR: $APP_AUTHOR"
+        echo "APP_DESCRIPTION: $APP_DESCRIPTION"
+        echo "APP_METADATA_KEYWORDS: $APP_METADATA_KEYWORDS"
+        echo "APP_METADATA_OPENGRAPH_SITENAME: $APP_METADATA_OPENGRAPH_SITENAME"
 
     - name: Cache npm and Next.js build cache
       uses: actions/cache@v4
@@ -50,6 +50,13 @@ jobs:
       run: npm ci
 
     - name: Build the project for production environment
+      env:
+        APP_URL: ${{ env.APP_URL }}
+        APP_TITLE: ${{ env.APP_TITLE }}
+        APP_AUTHOR: ${{ env.APP_AUTHOR }}
+        APP_DESCRIPTION: ${{ env.APP_DESCRIPTION }}
+        APP_METADATA_KEYWORDS: ${{ env.APP_METADATA_KEYWORDS }}
+        APP_METADATA_OPENGRAPH_SITENAME: ${{ env.APP_METADATA_OPENGRAPH_SITENAME }}
       run: npm run build
 
     - name: Configuring Directory Permissions of the server
