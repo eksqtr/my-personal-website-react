@@ -1,5 +1,5 @@
 import Image from "next/image";
-import ejc from "@@/public/me.jpg"
+import ejc from "@@/public/images/me.jpg"
 import { AiFillLinkedin, AiFillGithub } from 'react-icons/ai';
 import { RefObject } from "react";
 

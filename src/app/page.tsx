@@ -2,12 +2,12 @@
 import { useState, useEffect, useRef} from 'react';
 
 // Import the Components Navigation Bar
-import NavigationBar from "@/app/components/navigation/navbar";
-import AboutSection from "@/app/components/aboutsection/about";
-import TechSection from "@/app/components/techsection/tech";
+import NavigationBar from "@@/components/navigation/navbar";
+import AboutSection from "@@/components/aboutsection/about";
+import TechSection from "@@/components/techsection/tech";
 
 // Design Utility
-import MouseHoverCircle from "@/app/components/utilities/mousecirclehover";
+import MouseHoverCircle from "@@/components/utilities/mousecirclehover";
 
 export default function Home() {
 	const [isDarkMode, setDarkMode] = useState(true); // Changing the default darkmode theme to true because its beautiful.
