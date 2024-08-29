@@ -1,0 +1,13 @@
+# *
+User-agent: *
+Allow: /
+
+# Googlebot
+User-agent: Googlebot
+Allow: /
+
+# Host
+Host: https://eubiejay.dev
+
+# Sitemaps
+Sitemap: https://eubiejay.dev/sitemap.xml
