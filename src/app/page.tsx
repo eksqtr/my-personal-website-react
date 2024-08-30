@@ -33,7 +33,7 @@ export default function Home() {
 					  }
                 });
             },
-            { rootMargin: "0px", threshold: 0.2 }
+            { rootMargin: "-50px", threshold: 0.2 }
         );
 
 		const aboutSection = aboutSectionRef.current;
