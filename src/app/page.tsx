@@ -5,6 +5,8 @@ import { useState, useEffect, useRef} from 'react';
 import NavigationBar from "@/components/navigation/navbar";
 import AboutSection from "@/components/aboutsection/about";
 import TechSection from "@/components/techsection/tech";
+import ProjectsSection from '@/components/projectsection/project';
+
 
 // Design Utility
 import MouseHoverCircle from "@/components/utilities/mousecirclehover";
@@ -15,6 +17,7 @@ export default function Home() {
 	// Here we're going to declare separate section ref on each section to behave indepedently
 	const aboutSectionRef = useRef<HTMLElement | null>(null);
 	const techSectionRef = useRef<HTMLElement | null>(null);
+    const projectSectionRef = useRef<HTMLElement | null>(null);
 
 	// Now we use useEffect to observe each sections intersct with users view
     useEffect(() => {
@@ -30,17 +33,21 @@ export default function Home() {
 					  }
                 });
             },
-            { rootMargin: "-50px", threshold: 0.2 }
+            { rootMargin: "0px", threshold: 0.2 }
         );
 
 		const aboutSection = aboutSectionRef.current;
         const techSection = techSectionRef.current;
+        const projectSection = projectSectionRef.current;
 
         if (aboutSection) {
             observer.observe(aboutSection);
         }
         if (techSection) {
             observer.observe(techSection);
+        }
+        if (projectSection) {
+            observer.observe(projectSection);
         }
 
         return () => {
@@ -49,6 +56,9 @@ export default function Home() {
             }
             if (techSection) {
                 observer.unobserve(techSection);
+            }
+            if (projectSection) {
+                observer.unobserve(projectSection);
             }
         };
     }, []);
@@ -65,6 +75,8 @@ export default function Home() {
 			<AboutSection sectionRef={aboutSectionRef} />
 			{/* TechSection Section Components */}
 			<TechSection sectionRef={techSectionRef} />
+
+            <ProjectsSection sectionRef={projectSectionRef}/>
 
 			<div className="fixed bottom-0 left-0 right-0 bg-gray-500 dark:bg-gray-800 text-white text-center py-2">
 				I&apos;m building my personal website right now. Thanks for visiting and check back soon!

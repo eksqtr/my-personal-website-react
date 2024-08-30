@@ -61,7 +61,7 @@ const NavigationBar = (props: NavigationProps) => {
 
 
   return (
-    <nav className="py-5 flex justify-between shadow-md sm:px-10 fixed w-full top-0 bg-white dark:bg-gray-800 z-10">
+    <nav className="py-5 flex justify-between shadow-md sm:px-10 fixed w-full top-0 bg-white dark:bg-gray-800 z-nav">
         <div className='flex flex-col p-0 m-0'>
           <span className="hidden sm:block md:text-4xl text-gray-500 dark:text-gray-300">DEV.ejc</span>
           <span className="hidden sm:block md:text-md text-gray-500 dark:text-gray-300">clemente@eubiejay.dev</span>
