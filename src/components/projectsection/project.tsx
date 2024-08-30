@@ -1,5 +1,6 @@
 import { useState, RefObject, useEffect } from 'react';
 import { MdOpenInNew } from 'react-icons/md';
+import Image from 'next/image';
 
 type ProjectProps = {
     sectionRef: RefObject<HTMLElement>;
@@ -28,7 +29,7 @@ const projects: Project[] = [
         projectUrl: "https://github.com/eksqtr/EJC-SMS",
         techStack: ["C#", "VB.Net"]
     },
-    // Add more projects here
+    // We can add more projects here
 ];
 
 const ProjectsSection = (props: ProjectProps) => {
@@ -45,7 +46,7 @@ const ProjectsSection = (props: ProjectProps) => {
         setTimeout(() => {
             setActiveIndex(null);
             setIsClosing(false);
-        }, 500); // Match the duration of the slide-out animation
+        }, 500); 
     };
 
     const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -83,9 +84,11 @@ const ProjectsSection = (props: ProjectProps) => {
                             onClick={() => handleCardClick(index)}
                         >
                             <div className="bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
-                                <img
+                                <Image
                                     src={project.imageUrl}
                                     alt={project.title}
+                                    width={800} 
+                                    height={450}
                                     className="w-full h-48 object-cover"
                                 />
                                 <div className="p-4">
@@ -140,10 +143,12 @@ const ProjectsSection = (props: ProjectProps) => {
                             &times;
                         </button>
                         <div className="w-full h-80 relative">
-                            <img
+                            <Image
                                 src={projects[activeIndex].imageUrl}
                                 alt={projects[activeIndex].title}
-                                className="w-full h-full object-cover rounded-lg"
+                                width={800} 
+                                height={450}
+                                className="w-full h-full rounded-lg"
                             />
                         </div>
                         <h3 className="text-3xl font-semibold mt-4 dark:text-white">
