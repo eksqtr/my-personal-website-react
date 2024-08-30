@@ -48,7 +48,7 @@ const TechSection = (props: TechProps) => {
           id="tech-stack"
         >
           {/* Tabs */}
-          <div className="mt-20 flex justify-center md:justify-start mb-8">
+          <div className="md:mt-20 flex justify-center md:justify-start mb-8">
             <button
               className={`px-4 text-lg font-medium ${activeTab === 'tech' ? 'text-teal-600 border-b-2 border-teal-600' : 'text-gray-600 dark:text-gray-300'}`}
               onClick={() => handleTabChange('tech')}
