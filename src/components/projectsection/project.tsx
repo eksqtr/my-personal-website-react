@@ -1,6 +1,6 @@
 import { useState, RefObject, useEffect } from 'react';
 import { MdOpenInNew } from 'react-icons/md';
-import Image from 'next/image';
+// import Image from 'next/image';
 
 type ProjectProps = {
     sectionRef: RefObject<HTMLElement>;
@@ -69,7 +69,7 @@ const ProjectsSection = (props: ProjectProps) => {
     }, []);
 
     return (
-        <section className={`md:p-16 sm:px-5 dark:bg-gray-900 lg:h-screen ${activeIndex !== null ? 'z-modal' : ''}`} id="project" ref={props.sectionRef}>
+        <section className={`md:px-20 pt-14 pb-14 dark:bg-gray-900 lg:h-screen ${activeIndex !== null ? 'z-modal' : ''}`} id="project" ref={props.sectionRef}>
             <h2 className="md:mt-20 text-4xl md:text-5xl py-4 text-teal-600 font-medium text-center md:text-left">
                 Projects
             </h2>
@@ -84,7 +84,7 @@ const ProjectsSection = (props: ProjectProps) => {
                             onClick={() => handleCardClick(index)}
                         >
                             <div className="bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
-                                <Image
+                                <img
                                     src={project.imageUrl}
                                     alt={project.title}
                                     width={800} 
@@ -143,12 +143,12 @@ const ProjectsSection = (props: ProjectProps) => {
                             &times;
                         </button>
                         <div className="w-full h-80 relative">
-                            <Image
+                            <img
                                 src={projects[activeIndex].imageUrl}
                                 alt={projects[activeIndex].title}
                                 width={800} 
                                 height={450}
-                                className="w-full h-full rounded-lg"
+                                className="w-full h-full object-cover rounded-lg"
                             />
                         </div>
                         <h3 className="text-3xl font-semibold mt-4 dark:text-white">
