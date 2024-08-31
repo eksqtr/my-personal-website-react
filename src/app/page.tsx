@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect, useRef} from 'react';
-import { useRouter } from 'next/navigation';
 
 
 // Import the Components Navigation Bar
@@ -15,7 +14,7 @@ import MouseHoverCircle from "@/components/utilities/mousecirclehover";
 
 export default function Home() {
 	const [isDarkMode, setDarkMode] = useState(true); // Changing the default darkmode theme to true because its beautiful.
-    
+
 	// Here we're going to declare separate section ref on each section to behave indepedently
 	const aboutSectionRef = useRef<HTMLElement | null>(null);
 	const techSectionRef = useRef<HTMLElement | null>(null);

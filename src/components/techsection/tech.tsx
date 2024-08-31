@@ -1,4 +1,4 @@
-import { RefObject, useState, useEffect, useRef} from "react";
+import { RefObject, useState, useEffect} from "react";
 import { MdOpenInNew } from "react-icons/md";
 import { usePathname } from "next/navigation";
 import JobExperience from "./jobsList"

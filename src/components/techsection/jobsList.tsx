@@ -1,11 +1,8 @@
-import { useState, useEffect, RefObject } from "react";
+import { useState, useEffect } from "react";
 import DOMPurify from 'dompurify';
 import moment from 'moment-timezone';
 import { useSearchParams, usePathname } from "next/navigation";
 
-type _JobProps = {
-  sectionRef: RefObject<HTMLElement>
-}
 // props
 type JobProps = {
     dateStarted: Date;
@@ -61,7 +58,7 @@ const jobs: JobProps[] = [
         techStacks: ["Pawn", "VueJS", "OVH Cloud", "Cloudflare", "Trello", "Discord", "Socket.io", "NodeJS", "ExpressJS", "MySQL"],
     },
 ];
-const JobExperience = (props: _JobProps) => {
+const JobExperience = () => {
     const [selectedJob, setSelectedJob] = useState<JobProps | null>(null); //jobs[0]
     const [jobIdCache, setJobIdCache] = useState(-1);
     const pathname = usePathname();
