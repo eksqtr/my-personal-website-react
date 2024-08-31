@@ -26,10 +26,11 @@ const TechSection = (props: TechProps) => {
         if (tab) {
             setActiveTab(tab);
         }
-    
+
         if (hash.startsWith('tech-stack') && sectionRef.current) {
             sectionRef.current.scrollIntoView({ behavior: 'smooth' });
         }
+
     }, [sectionRef]);
 
     const handleTabChange = (tab: 'tech' | 'experience') => {
