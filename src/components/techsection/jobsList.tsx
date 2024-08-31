@@ -60,29 +60,37 @@ const jobs: JobProps[] = [
 ];
 const JobExperience = () => {
     const [selectedJob, setSelectedJob] = useState<JobProps | null>(null); //jobs[0]
+    const [jobIdCache, setJobIdCache] = useState(-1);
     const pathname = usePathname();
     const searchParams = useSearchParams();
 
     useEffect(() => {
+      const hash = window.location.hash.substring(1); // Extract hash without '#'
+      if(hash.split("?")[0] === 'tech-stack')
+      {
         const hash = window.location.hash.substring(1); // extract without the #
         const urlParams = new URLSearchParams(hash.split('?')[1] || '');
-        const jobId = urlParams.get('job');
-        console.log("jobid", jobId);
-        console.log(jobs.length);
-
-        if (jobId && jobs[parseInt(jobId)]) setSelectedJob(jobs[parseInt(jobId)]);
-        else {
-          // wW need to handle if jobid is undefined as well out of array index.
-          window.history.pushState(null, '', `${pathname}#tech-stack?tab=experience&job=0`);
-          setSelectedJob(jobs[0]);
+        const jobId: any = jobIdCache !== -1 ? jobIdCache : urlParams.get('job') || 0;
+        // console.log("jobid", jobId);
+        if (jobs[parseInt(jobId)]) 
+        {
+          setSelectedJob(jobs[parseInt(jobId)]);
+          window.history.pushState(null, '', `${pathname}#tech-stack?tab=experience&job=${jobId !== -1 ? jobId : 0}`);
         }
-
+        else {
+          // We need to handle if jobid is undefined as well out of array index.
+          window.history.pushState(null, '', `${pathname}#tech-stack?tab=experience&job=${jobId !== -1 ? jobId : 0}`);
+          setSelectedJob(jobs[jobId !== -1 ? jobId : 0]);
+        }
+      }
     }, [pathname, searchParams]);
 
     const handleJobClick = (job: JobProps, index: number) => {
+      console.log(`handleJobClick: ${job} | ${index}`);
+      setJobIdCache(index)
       setSelectedJob(job);
-      const params = new URLSearchParams(searchParams);
-      params.set('job', index.toString());
+      // const params = new URLSearchParams(searchParams);
+      // params.set('job', index.toString());
       window.history.pushState(null, '', `${pathname}#tech-stack?tab=experience&job=${index}`);
     };
   

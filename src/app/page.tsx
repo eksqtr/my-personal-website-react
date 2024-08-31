@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useRef} from 'react';
 
+
 // Import the Components Navigation Bar
 import NavigationBar from "@/components/navigation/navbar";
 import AboutSection from "@/components/aboutsection/about";
@@ -25,6 +26,11 @@ export default function Home() {
             (entries) => {
                 entries.forEach((entry) => {
                     if (entry.isIntersecting) {
+
+                        // Implementing hash url change when scrolling between sections
+                        const id = entry.target.id;
+                        window.history.replaceState(null, "", `#${id}`);
+
 						entry.target.classList.remove('animate-fadeOut');
 						entry.target.classList.add('animate-fadeIn');
 					  } else {
