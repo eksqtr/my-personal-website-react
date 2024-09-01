@@ -1,6 +1,6 @@
 import { useState, RefObject, useEffect } from 'react';
 import { MdOpenInNew } from 'react-icons/md';
-// import Image from 'next/image';
+import { FaAngleLeft, FaChevronRight } from 'react-icons/fa6';
 
 type ProjectProps = {
     sectionRef: RefObject<HTMLElement>;
@@ -10,6 +10,7 @@ type Project = {
     title: string;
     description: string;
     imageUrl: string;
+    previewImg: string[];
     projectUrl: string;
     techStack: string[];
 };
@@ -19,6 +20,7 @@ const projects: Project[] = [
         title: "Survival Z Mini Game",
         description: "A Game that was developed in C# Language Windows Form from the scratch in just 5 days! without any Game Engine Involved.",
         imageUrl: "https://github.com/eksqtr/Survival-Z-Mini-Game-Master/blob/master/Screenshots/mainmenu.png?raw=true",
+        previewImg: ["https://github.com/eksqtr/Survival-Z-Mini-Game-Master/blob/master/Screenshots/mainmenu.png?raw=true"], // We can add more image previous url here
         projectUrl: "https://github.com/eksqtr/Survival-Z-Mini-Game-Master",
         techStack: ["C#", ".Net"]
     },
@@ -26,6 +28,7 @@ const projects: Project[] = [
         title: "EJC-SMS",
         description: "EJC Short Message Service Library based on C# Language and VB .Net in ability to add SMS Feature on your existing project in just few lines of code.",
         imageUrl: "https://github.com/eksqtr/EJC-SMS/blob/master/Screenshots/Inbox_Dashboard.png?raw=true",
+        previewImg: ["https://github.com/eksqtr/EJC-SMS/blob/master/Screenshots/Inbox_Dashboard.png?raw=true", "https://github.com/eksqtr/EJC-SMS/blob/master/Screenshots/Send_SMS_(Single).png?raw=true", "https://raw.githubusercontent.com/eksqtr/EJC-SMS/master/Screenshots/Single_SMS_(Proof).jpg"],
         projectUrl: "https://github.com/eksqtr/EJC-SMS",
         techStack: ["C#", "VB.Net"]
     },
@@ -47,6 +50,34 @@ const ProjectsSection = (props: ProjectProps) => {
             setActiveIndex(null);
             setIsClosing(false);
         }, 500); 
+    };
+
+    const onPreviewClickPrevious = () => {
+        const container = document.querySelector('.image-preview-placeholder') as HTMLDivElement | null;
+        if (container) {
+            const img = container.querySelector('img') as HTMLImageElement | null;
+            if (img) {
+                const scrollAmount = img.clientWidth + 24; // Note: Add the margin space (24px as per your space-x-6)
+                container.scrollBy({
+                    left: -scrollAmount,
+                    behavior: 'smooth',
+                });
+            }
+        }
+    };
+    
+    const onPreviewClickNext = () => {
+        const container = document.querySelector('.image-preview-placeholder') as HTMLDivElement | null;
+        if (container) {
+            const img = container.querySelector('img') as HTMLImageElement | null;
+            if (img) {
+                const scrollAmount = img.clientWidth + 24; 
+                container.scrollBy({
+                    left: scrollAmount,
+                    behavior: 'smooth',
+                });
+            }
+        }
     };
 
     const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -78,7 +109,7 @@ const ProjectsSection = (props: ProjectProps) => {
                     {projects.map((project, index) => (
                         <div
                             key={index}
-                            className={`flex-none w-80 cursor-pointer  duration-300 hover:shadow-teal-400 transition-all ease-in-out ${
+                            className={`flex-none w-80 cursor-pointer duration-300 hover:shadow-teal-400 transition-all ease-in-out ${
                                 index === activeIndex ? 'transform scale-105 z-10' : ''
                             }`}
                             onClick={() => handleCardClick(index)}
@@ -90,6 +121,8 @@ const ProjectsSection = (props: ProjectProps) => {
                                     width={800} 
                                     height={450}
                                     className="w-full h-48 object-cover"
+                                    draggable="false"
+                                    style={{ userSelect: 'none' }}
                                 />
                                 <div className="p-4">
                                     <h3 className="text-2xl font-semibold dark:text-white truncate">
@@ -142,14 +175,47 @@ const ProjectsSection = (props: ProjectProps) => {
                         >
                             &times;
                         </button>
-                        <div className="w-full h-80 relative">
-                            <img
-                                src={projects[activeIndex].imageUrl}
-                                alt={projects[activeIndex].title}
-                                width={800} 
-                                height={450}
-                                className="w-full h-full object-cover rounded-lg"
-                            />
+                        <div className="overflow-hidden w-full h-80 relative">
+                            {/* Left Arrow Btn */}
+                            {
+                                projects[activeIndex].previewImg.length > 1 ? 
+                                (
+                                    <div
+                                        className="absolute left-4 top-1/2 transform -translate-y-1/2 dark:bg-gray-800 bg-gray-400 text-white p-2 rounded-full cursor-pointer z-10 dark:hover:text-teal-500 hover:text-gray-800 hover:scale-110 transition-all duration-500 ease-in-out"
+                                        onClick={onPreviewClickPrevious}
+                                    >
+                                        <FaAngleLeft/> {/* Icon left */}
+                                    </div>
+                                ) : ''
+                            }
+                            
+                            {/* Right Arrow Btn */}
+                            {
+                                projects[activeIndex].previewImg.length > 1 ? 
+                                (
+                                    <div
+                                        className="absolute right-4 top-1/2 transform -translate-y-1/2 dark:bg-gray-800 bg-gray-400 text-white p-2 rounded-full cursor-pointer z-10 dark:hover:text-teal-500 hover:text-gray-800 hover:scale-110 transition-all duration-500 ease-in-out"
+                                        onClick={onPreviewClickNext}
+                                    >
+                                        <FaChevronRight/> {/* Icon Right */}
+                                    </div>
+                                ) :
+                            ''}
+                            
+
+                            {/* Preview Image Placeholder */}
+                            <div className="image-preview-placeholder flex snap-x snap-mandatory overflow-x-auto scroll-smooth space-x-6 pb-8">
+                                {projects[activeIndex].previewImg.map((image, index) => (
+                                    <img
+                                        key={index}
+                                        src={image}
+                                        alt={`Preview ${index + 1}`}
+                                        className="w-full h-full object-cover rounded-lg snap-center"
+                                        draggable="false"
+                                        style={{ userSelect: 'none', cursor: 'pointer'  }}
+                                    />
+                                ))}
+                            </div>
                         </div>
                         <h3 className="text-3xl font-semibold mt-4 dark:text-white">
                             {projects[activeIndex].title}
@@ -176,7 +242,7 @@ const ProjectsSection = (props: ProjectProps) => {
                             href={projects[activeIndex].projectUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="mt-4 flex items-center text-teal-600 hover:text-teal-400 transition-colors"
+                            className="mt-4 flex items-center text-teal-600 transition-colors hover:text-teal-500"
                         >
                             View Project <MdOpenInNew className="ml-2" />
                         </a>
