@@ -84,9 +84,9 @@ export default function Home() {
 
             <ProjectsSection sectionRef={projectSectionRef}/>
 
-			<div className="fixed bottom-0 left-0 right-0 bg-gray-500 dark:bg-gray-800 text-white text-center py-2">
+			{/* <div className="fixed bottom-0 left-0 right-0 bg-gray-500 dark:bg-gray-800 text-white text-center py-2">
 				I&apos;m building my personal website right now. Thanks for visiting and check back soon!
-			</div>
+			</div> */}
 			</main>
 		</div>
   );
