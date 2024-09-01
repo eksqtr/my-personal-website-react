@@ -87,8 +87,8 @@ const NavigationBar = (props: NavigationProps) => {
 
             {activeMenu.map(menu => (
                 (
-                    <li key={menu.link.replace(/#/, '')} className={`hidden md:block  ${menu.isActive ? "text-teal-600 dark:text-yellow-300" : ""}`}>
-                        <a href={menu.link} className={`flex items-center flex-row ${menu.style}`} >{menu.title}{menu.icon && <menu.icon className={menu.iconStyle} />}</a>
+                    <li key={menu.link.replace(/#/, '')} className={`hidden md:block`}>
+                        <a href={menu.link} className={`flex items-center flex-row ${menu.style} ${menu.isActive ? "text-teal-600 dark:text-yellow-300" : ""}`} >{menu.title}{menu.icon && <menu.icon className={menu.iconStyle} />}</a>
                     </li>
                 )
             ))}
