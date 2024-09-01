@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { BsFillMoonStarsFill} from 'react-icons/bs';
 import { FaSun } from "react-icons/fa6";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import MenuList from "./menuList";
 
@@ -14,6 +16,19 @@ const NavigationBar = (props: NavigationProps) => {
   // State to control the visibility of the menu
   const [isMenuOpen, setMenuOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState(MenuList);
+
+  const DownloadNotification = () => {
+    // Configuration of the toast regarding downloading the resume
+    toast.info("Downloading the Resume will start shortly...", {
+      position: "top-right",
+      className: "!bg-gray-800 !text-white dark:!bg-gray-700",
+      theme: "colored",
+      hideProgressBar:false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      autoClose:2000,
+    });
+  }
 
   // Function to toggle the menu visibility
   const toggleMenu = () => setMenuOpen(!isMenuOpen);
@@ -29,9 +44,9 @@ const NavigationBar = (props: NavigationProps) => {
               prevMenu.map((menu) => {
                 if (menu.link === `#${entry.target.id}`) {
                   // console.log(`Activating menu: ${menu.link}`); // Debugging
-                  return { ...menu, isActive: true };
+                  return { ...menu, isActive: menu.isActive !== null ? true : null };
                 }
-                return { ...menu, isActive: false };
+                return { ...menu, isActive: menu.isActive !== null ? false : null };
               })
             );
           }
@@ -61,17 +76,19 @@ const NavigationBar = (props: NavigationProps) => {
 
 
   return (
+    <>
+    <ToastContainer />
     <nav className="py-5 flex justify-between shadow-md sm:px-10 fixed w-full top-0 bg-white dark:bg-gray-800 z-nav">
         <div className='flex flex-col p-0 m-0'>
           <span className="hidden sm:block md:text-4xl text-gray-500 dark:text-gray-300">DEV.ejc</span>
-          <span className="hidden sm:block md:text-md text-gray-500 dark:text-gray-300">clemente@eubiejay.dev</span>
+          <span className="hidden sm:block md:text-md text-gray-500 dark:text-gray-300 ">{process.env.NEXT_PUBLIC_AUTHOR_EMAIL_ADDRESS}</span>
         </div>
         <ul className="flex items-center gap-6 text-md">
 
             {activeMenu.map(menu => (
                 (
-                    <li key={menu.link.replace(/#/, '')} className={`hidden md:block ${menu.style} ${menu.isActive ? "text-teal-600 dark:text-yellow-300" : ""}`}>
-                        <a href={menu.link} >{menu.title}</a>
+                    <li key={menu.link.replace(/#/, '')} className={`hidden md:block  ${menu.isActive ? "text-teal-600 dark:text-yellow-300" : ""}`}>
+                        <a href={menu.link} className={`flex items-center flex-row ${menu.style}`} >{menu.title}{menu.icon && <menu.icon className={menu.iconStyle} />}</a>
                     </li>
                 )
             ))}
@@ -88,7 +105,7 @@ const NavigationBar = (props: NavigationProps) => {
             </li>
             {/* Basically My Resume Download */}
             <li>
-                <a href="#" className="bg-gradient-to-r from-cyan-500 to-teal-500 text-white px-4 py-2 rounded-md">Resume</a>
+                <a href={process.env.NEXT_PUBLIC_DOWNLOADABLE_URL_RESUME} onClick={DownloadNotification} className="bg-gradient-to-r from-cyan-500 to-teal-500 text-white px-4 py-3 rounded-md hover:!from-red-500">Resume</a>
             </li>
             <li className="lg:hidden md:hidden px-4 py-3 mr-3 rounded-md bg-gradient-to-r from-cyan-500 to-teal-500 text-white bg-teal-600 cursor-pointer" onClick={() => toggleMenu()}>
                     { isMenuOpen ? <FaChevronLeft />: <FaChevronRight />}
@@ -96,19 +113,20 @@ const NavigationBar = (props: NavigationProps) => {
         </ul>
 
         {/* Mobile Navigation */}
-        <ul className={`mt-20 fixed items-end right-0 left-0 w-auto flex flex-col gap-3 md:hidden dark:text-white transition-transform duration-300 ease-in-out transform ${
+        <ul className={`mt-20 right-0 left-0 fixed items-end flex flex-col gap-3 md:hidden dark:text-white transition-transform duration-300 ease-in-out transform ${
           isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
 
             {activeMenu.map(menu => (
                 (
                     <li className={`flex items-center left-0 ${menu.style} ${menu.isActive ? "text-teal-600 dark:text-yellow-300" : ""}`} key={menu.link.replace(/#/, '')}>
-                        <a href={menu.link} className={`hover:scale-110 transition-all ease-in-out duration-500`}>{menu.title}</a> 
-                        <span className={`ml-2 bg-gray-500 rounded-s-xl h-1 transition-all ease-in-out duration-500  ${menu.isActive ? 'w-10' : 'w-5'} text-black`}><hr /></span>
+                        <a href={menu.link} className={`hover:scale-110 transition-all ease-in-out duration-500 flex justify-center`}>{menu.title}{menu.icon && <menu.icon className={menu.iconStyle} />}</a> 
+                        {menu.isActive !== null ? (<span className={`ml-2 bg-gray-500 rounded-s-xl h-1 transition-all ease-in-out duration-500  ${menu.isActive ? 'w-10' : 'w-5'} text-black`}><hr /></span>) : ''}
                     </li>
                 )
             ))}
         </ul>
     </nav>
+    </>
   );
 };
 

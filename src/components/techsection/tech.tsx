@@ -1,4 +1,4 @@
-import { RefObject, useState, useEffect} from "react";
+import { RefObject, useState, useEffect } from "react";
 import { MdOpenInNew } from "react-icons/md";
 import { usePathname } from "next/navigation";
 import JobExperience from "./jobsList"
@@ -10,7 +10,7 @@ type TechProps = {
 const TechSection = (props: TechProps) => {
     const [activeTab, setActiveTab] = useState<'tech' | 'experience'>('tech');
     const [iconSize] = useState('30px'); // Increased size for better visibility
-    const [resume_link, _] = useState("https://drive.google.com/file/d/1CXssqhJuY_-xgjQDOagCLyTckRvozBZr/view");
+    const [resume_link, _] = useState(process.env.NEXT_PUBLIC_VIEW_URL_RESUME);
     const pathname = usePathname();
     const sectionRef = props.sectionRef;
 
