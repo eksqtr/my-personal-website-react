@@ -1,4 +1,4 @@
-name: Deploying to Production (Google Cloud Platform VM)
+name: Deploying to Production Google Cloud Platform VM (https://eubiejay.dev)
 
 on:
   push:
@@ -12,7 +12,7 @@ on:
   #     - closed
 
 jobs:
-  deploy:
+  GCP-Deploy:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
     # if: github.event_name == 'push' || (github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'master')
