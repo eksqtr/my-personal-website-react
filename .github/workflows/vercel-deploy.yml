@@ -1,4 +1,4 @@
-name: Deploying to Production (Vercel.com)
+name: Deploying to Production Vercel (https://eubiejay.vercel.app)
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
@@ -16,7 +16,7 @@ on:
   #     - closed
 
 jobs:
-  deploy:
+  Vercel-Deploy:
     runs-on: ubuntu-latest
     #if: github.event_name == 'push' || (github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'master')
     if: github.ref == 'refs/heads/master'
