@@ -1,25 +1,27 @@
 name: Deploying to Production (Vercel.com)
 env:
-  VERCEL_ORG_ID: ${{ secrets.VERCEL_TEAM_ID }}
+  VERCEL_TEAM_ID: ${{ secrets.VERCEL_TEAM_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
 on:
   push:
     branches:
       - master  
-  pull_request:
-    branches:
-      - development  
-    types:
-      - closed
+  # Disabling development deployment because we didn't set up for development cloud environment for this.
+  # pull_request:
+  #   branches:
+  #     - development  
+  #   types:
+  #     - closed
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' || (github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'master')
+    #if: github.event_name == 'push' || (github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'master')
+    if: github.ref == 'refs/heads/master'
     steps:
       - name: Checkout project source
-      - uses: actions/checkout@v
+        uses: actions/checkout@v
 
       - name: Install Vercel CLI Latest
         run: npm install --global vercel@latest
