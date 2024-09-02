@@ -3,17 +3,19 @@ name: Deploying to Production (Google Cloud Platform VM)
 on:
   push:
     branches:
-      - master
-  pull_request:
-    branches:
-      - development
-    types:
-      - closed
+      - master  
+  # Disabling development deployment because we didn't set up for development cloud environment for this.
+  # pull_request:
+  #   branches:
+  #     - development  
+  #   types:
+  #     - closed
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' || (github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'master')
+    if: github.ref == 'refs/heads/master'
+    # if: github.event_name == 'push' || (github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'master')
     environment: 'production'
     env:
       APP_URL: ${{ vars.APP_URL }}
