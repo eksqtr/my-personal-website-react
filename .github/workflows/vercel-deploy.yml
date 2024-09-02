@@ -1,0 +1,36 @@
+name: Deploying to Production (Vercel.com)
+
+on:
+  push:
+    branches:
+      - master  
+  pull_request:
+    branches:
+      - development  
+    types:
+      - closed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || (github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'master')
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js Environment
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18' 
+
+    - name: Install project dependencies
+      run: npm ci
+
+    - name: Build the project
+      run: npm run build
+
+    - name: Deploy to Vercel
+      env:
+        VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      run: |
+        npx vercel --prod --token=$VERCEL_TOKEN
